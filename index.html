@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AMS Request System – Pharmacy</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin:0; display:flex; height:100vh; }
+    .sidebar { width:220px; background:#f7f7f7; padding:20px; box-shadow:2px 0 4px rgba(0,0,0,0.1); }
+    .sidebar h2 { font-size:18px; margin-bottom:20px; }
+    .sidebar button { width:100%; margin-bottom:10px; padding:10px; border:none; background:#009a3e; color:white; cursor:pointer; border-radius:6px; }
+    .main { flex:1; padding:24px; overflow-y:auto; }
+    .section { display:none; }
+    .active { display:block; }
+    .card { background:white; padding:16px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); margin-bottom:16px; }
+    .btn { padding:8px 12px; border:none; border-radius:6px; cursor:pointer; margin-right:8px; }
+    .approve { background:#009a3e; color:white; }
+    .disapprove { background:#dc2626; color:white; }
+    .delete { background:#6b7280; color:white; }
+    table { width:100%; border-collapse:collapse; margin-top:16px; }
+    table th, table td { border:1px solid #ddd; padding:8px; }
+    table th { background:#009a3e; color:white; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>AMS Pharmacy</h2>
+    <button onclick="showSection('pending')">Pending</button>
+    <button onclick="showSection('ids')">For IDS Approval</button>
+    <button onclick="showSection('approved')">Approved</button>
+    <button onclick="showSection('disapproved')">Disapproved</button>
+    <button onclick="showSection('deleted')">Deleted</button>
+    <button onclick="showSection('analysis')">Data Analysis</button>
+  </div>
+
+  <div class="main">
+
+    <!-- Pending Section -->
+    <div id="pending" class="section active">
+      <h2>Pending Requests</h2>
+      <label>Date:</label> <input type="date" id="pendingDate">
+      <button class="btn approve" onclick="loadPending()">Load Requests</button>
+      <div id="pendingList"></div>
+    </div>
+
+    <!-- IDS Section -->
+    <div id="ids" class="section">
+      <h2>For IDS Approval</h2>
+      <label>Date:</label> <input type="date" id="idsDate">
+      <button class="btn approve" onclick="loadIDS()">Filter</button>
+      <div id="idsList"></div>
+    </div>
+
+    <!-- Approved Table -->
+    <div id="approved" class="section">
+      <h2>Approved</h2>
+      <label>Date:</label> <input type="date" id="approvedDate">
+      <button class="btn approve" onclick="loadApproved()">Filter</button>
+      <table id="approvedTable">
+        <thead><tr><th>Patient</th><th>Drug</th><th>Dose</th><th>Resident</th><th>Date</th><th>Delete</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Disapproved Table -->
+    <div id="disapproved" class="section">
+      <h2>Disapproved</h2>
+      <label>Date:</label> <input type="date" id="disDate">
+      <button class="btn approve" onclick="loadDisapproved()">Filter</button>
+      <table id="disTable">
+        <thead><tr><th>Patient</th><th>Drug</th><th>Reason</th><th>Date</th><th>Delete</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Deleted Table -->
+    <div id="deleted" class="section">
+      <h2>Deleted Records</h2>
+      <label>Date:</label> <input type="date" id="delDate">
+      <button class="btn approve" onclick="loadDeleted()">Filter</button>
+      <table id="delTable">
+        <thead><tr><th>Patient</th><th>Drug</th><th>Date</th><th>Deleted On</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Analysis -->
+    <div id="analysis" class="section">
+      <h2>Data Analysis</h2>
+      <label>From:</label> <input type="date" id="fromDate">
+      <label>To:</label> <input type="date" id="toDate">
+      <button class="btn approve" onclick="runAnalysis()">Go</button>
+      <div id="analysisPanel"></div>
+    </div>
+
+  </div>
+
+<script>
+// === CONFIG: Replace with your deployed Apps Script Web App URL ===
+const API_URL = "https://script.google.com/macros/s/DEPLOYED_WEB_APP_URL/exec";
+
+// Helper: Fetch wrapper
+async function api(action, payload={}){
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action, payload })
+  });
+  return res.json();
+}
+
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function loadPending(){
+  document.getElementById('pendingList').innerHTML = '<div class="card">Sample Pending Card</div>';
+}
+function loadIDS(){ document.getElementById('idsList').innerHTML = '<div class="card">Sample IDS Card</div>'; }
+function loadApproved(){ }
+function loadDisapproved(){}
+function loadDeleted(){}
+function runAnalysis(){}
+</script>
+
+</body>
+</html>
