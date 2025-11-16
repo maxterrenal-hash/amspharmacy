@@ -39,12 +39,15 @@
     header .title-block span.subtitle {
       font-size: 0.8rem; opacity: 0.9;
     }
-    .content-shell { display: flex; height: 100vh; padding-top: 64px; }
+    .content-shell {
+      display: flex; height: 100vh; padding-top: 64px;
+    }
     .sidebar {
       width: 220px; background: var(--osmak-gray);
       padding: 16px; box-shadow: 2px 0 4px rgba(0,0,0,0.08);
     }
-    .sidebar h2 { font-size: 0.9rem; font-weight: 700; color: var(--text-muted);
+    .sidebar h2 {
+      font-size: 0.9rem; font-weight: 700; color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 12px;
     }
     .sidebar button {
@@ -54,7 +57,9 @@
       font-size: 0.85rem; text-align: left;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .sidebar button:hover { background: #e6f5ec; border-color: var(--osmak-green); }
+    .sidebar button:hover {
+      background: #e6f5ec; border-color: var(--osmak-green);
+    }
     .sidebar button.active-tab {
       background: var(--osmak-green); color: #fff;
       border-color: var(--osmak-green); font-weight: 600;
@@ -79,14 +84,17 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.06); margin-bottom: 12px;
       border: 1px solid #e5e7eb; font-size: 0.86rem;
     }
-    .card-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .card-header {
+      display: flex; justify-content: space-between; margin-bottom: 4px;
+    }
     .card-header .patient-name { font-weight: 600; font-size: 0.95rem; }
     .card-header .tag {
       font-size: 0.7rem; padding: 2px 6px; border-radius: 999px;
       background: #e5e7eb; color: #374151; text-transform: uppercase;
       letter-spacing: 0.06em;
     }
-    table { width: 100%; border-collapse: collapse; background: #fff;
+    table {
+      width: 100%; border-collapse: collapse; background: #fff;
       border-radius: 8px; overflow: hidden; margin-top: 12px;
     }
     table th, table td {
@@ -110,7 +118,7 @@
 <body>
 
 <header>
-  <img src="https://maxterrenal-hash.github.io/justculture/osmak-logo.png" />
+  <img src="https://maxterrenal-hash.github.io/justculture/osmak-logo.png" alt="Ospital ng Makati" />
   <div class="title-block">
     <span class="title">Ospital ng Makati</span>
     <span class="subtitle">AMS Request System – Pharmacy</span>
@@ -132,19 +140,63 @@
     <div id="pending" class="section active">
       <h2>Pending Requests</h2>
       <div class="toolbar">
-        <label>Date:</label>
+        <label for="pendingDate">Date:</label>
         <input type="date" id="pendingDate" />
-        <button class="btn approve" onclick="loadPending()">Load</button>
+        <button class="btn approve" type="button" onclick="loadPending()">Load</button>
       </div>
       <div id="pendingStatus" class="status-bar"></div>
       <div id="pendingList"></div>
     </div>
 
-    <div id="ids" class="section"><h2>For IDS Approval</h2></div>
-    <div id="approved" class="section"><h2>Approved</h2></div>
-    <div id="disapproved" class="section"><h2>Disapproved</h2></div>
-    <div id="deleted" class="section"><h2>Deleted</h2></div>
-    <div id="analysis" class="section"><h2>Data Analysis</h2></div>
+    <div id="ids" class="section">
+      <h2>For IDS Approval</h2>
+      <div class="toolbar">
+        <label for="idsDate">Date:</label>
+        <input type="date" id="idsDate" />
+        <button class="btn approve" type="button" onclick="loadIDS()">Load</button>
+      </div>
+      <div id="idsStatus" class="status-bar"></div>
+      <div id="idsList"></div>
+    </div>
+
+    <div id="approved" class="section">
+      <h2>Approved</h2>
+      <div class="toolbar">
+        <label for="approvedDate">Date:</label>
+        <input type="date" id="approvedDate" />
+        <button class="btn approve" type="button" onclick="loadApproved()">Load</button>
+      </div>
+      <div id="approvedStatus" class="status-bar"></div>
+      <div id="approvedTableWrapper"></div>
+    </div>
+
+    <div id="disapproved" class="section">
+      <h2>Disapproved</h2>
+      <div class="toolbar">
+        <label for="disapprovedDate">Date:</label>
+        <input type="date" id="disapprovedDate" />
+        <button class="btn approve" type="button" onclick="loadDisapproved()">Load</button>
+      </div>
+      <div id="disapprovedStatus" class="status-bar"></div>
+      <div id="disapprovedTableWrapper"></div>
+    </div>
+
+    <div id="deleted" class="section">
+      <h2>Deleted</h2>
+      <div class="toolbar">
+        <label for="deletedDate">Date:</label>
+        <input type="date" id="deletedDate" />
+        <button class="btn approve" type="button" onclick="loadDeleted()">Load</button>
+      </div>
+      <div id="deletedStatus" class="status-bar"></div>
+      <div id="deletedTableWrapper"></div>
+    </div>
+
+    <div id="analysis" class="section">
+      <h2>Data Analysis</h2>
+      <!-- Placeholder for future analysis UI -->
+      <p class="empty-msg">Data analysis module coming next.</p>
+    </div>
   </div>
 </div>
 
@@ -152,25 +204,28 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbzYL_a3bmX0IAcVEbCYLlm6vRrLZjQCMG48zG8tyf-bRssBUiNVjQVXQsgccUJzREkg3w/exec";
 
 async function api(params) {
-  const url = API_URL +"?"+ new URLSearchParams(params).toString();
+  const url = API_URL + "?" + new URLSearchParams(params).toString();
   try {
     const res = await fetch(url);
     const data = await res.json();
     return data;
   } catch (e) {
-    return { ok:false, error:"Network error" };
+    return { ok: false, error: "Network error" };
   }
 }
 
-function showSection(id, btn){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.sidebar button').forEach(b=>b.classList.remove('active-tab'));
-  btn.classList.add('active-tab');
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const section = document.getElementById(id);
+  if (section) section.classList.add('active');
+
+  document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-tab'));
+  if (btn) btn.classList.add('active-tab');
 }
 
-async function loadPending(){
-  const date = document.getElementById('pendingDate').value;
+async function loadPending() {
+  const dateInput = document.getElementById('pendingDate');
+  const date = dateInput.value;
   const list = document.getElementById('pendingList');
   const status = document.getElementById('pendingStatus');
 
@@ -182,7 +237,7 @@ async function loadPending(){
     return;
   }
 
-  const res = await api({ action:"getPending", date });
+  const res = await api({ action: "getPending", date });
 
   if (!res.ok) {
     status.textContent = "Error: " + res.error;
@@ -201,44 +256,232 @@ async function loadPending(){
     card.className = 'card';
     card.innerHTML = `
       <div class="card-header">
-        <span class="patient-name">${row["Patient Name"]}</span>
-        <span class="tag">${row["Drug Type"]}</span>
+        <span class="patient-name">${row["Patient Name"] || ''}</span>
+        <span class="tag">${row["Drug Type"] || ''}</span>
       </div>
-      <div><strong>Diagnosis:</strong> ${row["Diagnosis"]}</div>
-      <div><strong>Drug:</strong> ${row["Drug"]}</div>
-      <div><strong>Indication:</strong> ${row["Indication"]}</div>
+      <div><strong>Diagnosis:</strong> ${row["Diagnosis"] || ''}</div>
+      <div><strong>Drug:</strong> ${row["Drug"] || ''}</div>
+      <div><strong>Indication:</strong> ${row["Indication"] || ''}</div>
       <div style="margin-top:8px;">
-        <button class="btn approve" onclick="approvePending('${row["Timestamp"]}')">Approve</button>
-        <button class="btn disapprove" onclick="disapprovePending('${row["Timestamp"]}')">Disapprove</button>
-        <button class="btn delete" onclick="deletePending('${row["Timestamp"]}')">Delete</button>
+        <button class="btn approve" type="button" onclick="approvePending('${row["Timestamp"]}')">Approve</button>
+        <button class="btn disapprove" type="button" onclick="disapprovePending('${row["Timestamp"]}')">Disapprove</button>
+        <button class="btn delete" type="button" onclick="deletePending('${row["Timestamp"]}')">Delete</button>
       </div>
     `;
     list.appendChild(card);
   });
 }
-// --- ACTIONS ---
-async function approvePending(ts){
-  const res = await api({ action:"approveRow", id: ts });
-  if(!res.ok){ alert("Approve failed: "+res.error); return; }
+
+// --- ACTIONS FOR PENDING ---
+async function approvePending(ts) {
+  const res = await api({ action: "approveRow", id: ts });
+  if (!res.ok) {
+    alert("Approve failed: " + res.error);
+    return;
+  }
   loadPending();
 }
 
-async function deletePending(ts){
-  const res = await api({ action:"deleteRow", id: ts });
-  if(!res.ok){ alert("Delete failed: "+res.error); return; }
+async function deletePending(ts) {
+  const res = await api({ action: "deleteRow", id: ts });
+  if (!res.ok) {
+    alert("Delete failed: " + res.error);
+    return;
+  }
   loadPending();
 }
 
-async function disapprovePending(ts){
+async function disapprovePending(ts) {
   const reason = prompt("Reason for disapproval:");
-  const res = await api({ action:"disapproveRow", id: ts, reason });
-  if(!res.ok){ alert("Disapprove failed: "+res.error); return; }
+  const res = await api({ action: "disapproveRow", id: ts, reason: reason || "" });
+  if (!res.ok) {
+    alert("Disapprove failed: " + res.error);
+    return;
+  }
   loadPending();
 }
 
-// --- LOADERS ---
-async function loadIDS(){ /* TODO */ }
-async function loadApproved(){ /* TODO */ }
-async function loadDisapproved(){ /* TODO */ }
-async function loadDeleted(){ /* TODO */ }
+// --- PLACEHOLDER LOADERS FOR OTHER SECTIONS ---
+async function loadIDS() {
+  const date = document.getElementById('idsDate').value;
+  const status = document.getElementById('idsStatus');
+  const list = document.getElementById('idsList');
+  status.textContent = "Loading...";
+  list.innerHTML = "";
+  if (!date) {
+    status.textContent = "Please select a date.";
+    return;
+  }
+  const res = await api({ action: "getIDS", date });
+  if (!res.ok) {
+    status.textContent = "Error: " + res.error;
+    return;
+  }
+  status.textContent = res.rows.length + " matching request(s).";
+  if (!res.rows.length) {
+    list.innerHTML = '<div class="empty-msg">No IDS approvals for this date.</div>';
+  }
+}
 
+async function loadApproved() {
+  const date = document.getElementById('approvedDate').value;
+  const status = document.getElementById('approvedStatus');
+  const wrap = document.getElementById('approvedTableWrapper');
+  status.textContent = "Loading...";
+  wrap.innerHTML = "";
+  if (!date) {
+    status.textContent = "Please select a date.";
+    return;
+  }
+  const res = await api({ action: "getApproved", date });
+  if (!res.ok) {
+    status.textContent = "Error: " + res.error;
+    return;
+  }
+  status.textContent = res.rows.length + " matching request(s).";
+  if (!res.rows.length) {
+    wrap.innerHTML = '<div class="empty-msg">No approved requests for this date.</div>';
+    return;
+  }
+  const table = document.createElement('table');
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Patient</th>
+        <th>Drug</th>
+        <th>Indication</th>
+        <th>Ward</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+  const tbody = table.querySelector('tbody');
+  res.rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r["Timestamp"] || ''}</td>
+      <td>${r["Patient Name"] || ''}</td>
+      <td>${r["Drug"] || ''}</td>
+      <td>${r["Indication"] || ''}</td>
+      <td>${r["Ward"] || ''}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  wrap.appendChild(table);
+}
+
+async function loadDisapproved() {
+  const date = document.getElementById('disapprovedDate').value;
+  const status = document.getElementById('disapprovedStatus');
+  const wrap = document.getElementById('disapprovedTableWrapper');
+  status.textContent = "Loading...";
+  wrap.innerHTML = "";
+  if (!date) {
+    status.textContent = "Please select a date.";
+    return;
+  }
+  const res = await api({ action: "getDisapproved", date });
+  if (!res.ok) {
+    status.textContent = "Error: " + res.error;
+    return;
+  }
+  status.textContent = res.rows.length + " matching request(s).";
+  if (!res.rows.length) {
+    wrap.innerHTML = '<div class="empty-msg">No disapproved requests for this date.</div>';
+    return;
+  }
+  const table = document.createElement('table');
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Patient</th>
+        <th>Drug</th>
+        <th>Indication</th>
+        <th>Ward</th>
+        <th>Reason</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+  const tbody = table.querySelector('tbody');
+  res.rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r["Timestamp"] || ''}</td>
+      <td>${r["Patient Name"] || ''}</td>
+      <td>${r["Drug"] || ''}</td>
+      <td>${r["Indication"] || ''}</td>
+      <td>${r["Ward"] || ''}</td>
+      <td>${r["Disapproval Reason"] || ''}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  wrap.appendChild(table);
+}
+
+async function loadDeleted() {
+  const date = document.getElementById('deletedDate').value;
+  const status = document.getElementById('deletedStatus');
+  const wrap = document.getElementById('deletedTableWrapper');
+  status.textContent = "Loading...";
+  wrap.innerHTML = "";
+  if (!date) {
+    status.textContent = "Please select a date.";
+    return;
+  }
+  const res = await api({ action: "getDeleted", date });
+  if (!res.ok) {
+    status.textContent = "Error: " + res.error;
+    return;
+  }
+  status.textContent = res.rows.length + " matching request(s).";
+  if (!res.rows.length) {
+    wrap.innerHTML = '<div class="empty-msg">No deleted requests for this date.</div>';
+    return;
+  }
+  const table = document.createElement('table');
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Patient</th>
+        <th>Drug</th>
+        <th>Indication</th>
+        <th>Ward</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+  const tbody = table.querySelector('tbody');
+  res.rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r["Timestamp"] || ''}</td>
+      <td>${r["Patient Name"] || ''}</td>
+      <td>${r["Drug"] || ''}</td>
+      <td>${r["Indication"] || ''}</td>
+      <td>${r["Ward"] || ''}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  wrap.appendChild(table);
+}
+
+// Initialize default dates to today for convenience
+(function initDates() {
+  const today = new Date().toISOString().slice(0, 10);
+  const ids = [
+    'pendingDate', 'idsDate', 'approvedDate',
+    'disapprovedDate', 'deletedDate'
+  ];
+  ids.forEach(id => {
+    const input = document.getElementById(id);
+    if (input && !input.value) input.value = today;
+  });
+})();
+</script>
+
+</body>
+</html>
