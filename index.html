@@ -114,7 +114,7 @@
 
 <script>
 // === CONFIG: Replace with your deployed Apps Script Web App URL ===
-const API_URL = "https://script.google.com/macros/s/AKfycbwW-XNOgEdkERU5ik5HrMTy6K1gK5H0YUfZs4FPw7mfXp3WPqodmcuGWFXGDRybVgD0-Q/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbza855egXWFLXFiJo_m6VIz-kcEIySdXsf1ilzuPbJeHdzghQoSWU4ri2uJ29zdx7JCkQ/exec";
 
 // Helper: Fetch wrapper
 async function api(action, payload={}){
@@ -152,9 +152,9 @@ function loadPending(){
         Dose: ${row['Dose']}<br>
         Resident: ${row['Resident Name']}<br>
         <div style="margin-top:10px;">
-          <button class="btn approve" onclick="approveRow('${row.id}')">Approve</button>
-          <button class="btn disapprove" onclick="disapproveRow('${row.id}')">Disapprove</button>
-          <button class="btn delete" onclick="deleteRow('${row.id}')">Delete</button>
+          <button class="btn approve" onclick="approveRow('${row["Timestamp"]}')">Approve</button>
+          <button class="btn disapprove" onclick="disapproveRow('${row["Timestamp"]}')">Disapprove</button>
+          <button class="btn delete" onclick="deleteRow('${row["Timestamp"]}')">Delete</button>
         </div>
       `;
       list.appendChild(card);
