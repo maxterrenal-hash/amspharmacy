@@ -114,7 +114,7 @@
 
 <script>
 // === CONFIG: Replace with your deployed Apps Script Web App URL ===
-const API_URL = "https://script.google.com/macros/s/AKfycbzqpxRYeQPtX1F6DehmLNjELFV2RYlMh_f_5ZfHElxelKJZGPElTPSIfNRspAkuKQasTw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwW-XNOgEdkERU5ik5HrMTy6K1gK5H0YUfZs4FPw7mfXp3WPqodmcuGWFXGDRybVgD0-Q/exec";
 
 // Helper: Fetch wrapper
 async function api(action, payload={}){
@@ -132,8 +132,39 @@ function showSection(id){
 }
 
 function loadPending(){
-  document.getElementById('pendingList').innerHTML = '<div class="card">Sample Pending Card</div>';
+  const date = document.getElementById('pendingDate').value;
+  const list = document.getElementById('pendingList');
+  if(!date){ list.innerHTML = '<p>Please select a date.</p>'; return; }
+  list.innerHTML = '<p>Loading...</p>';
+
+  api('getPending', { date }).then(data => {
+    if(!data.ok){ list.innerHTML = '<p>Error loading data.</p>'; return; }
+    const rows = data.rows || [];
+    if(rows.length === 0){ list.innerHTML = '<p>No pending requests for this date.</p>'; return; }
+
+    list.innerHTML = '';
+    rows.forEach(row => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <strong>${row['Patient Name']}</strong><br>
+        Drug: ${row['Drug']}<br>
+        Dose: ${row['Dose']}<br>
+        Resident: ${row['Resident Name']}<br>
+        <div style="margin-top:10px;">
+          <button class="btn approve" onclick="approveRow('${row.id}')">Approve</button>
+          <button class="btn disapprove" onclick="disapproveRow('${row.id}')">Disapprove</button>
+          <button class="btn delete" onclick="deleteRow('${row.id}')">Delete</button>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+  });
 }
+
+function approveRow(id){ api('approveRow',{id}).then(()=>loadPending()); }
+function disapproveRow(id){ api('disapproveRow',{id}).then(()=>loadPending()); }
+function deleteRow(id){ api('deleteRow',{id}).then(()=>loadPending()); }
 function loadIDS(){ document.getElementById('idsList').innerHTML = '<div class="card">Sample IDS Card</div>'; }
 function loadApproved(){ }
 function loadDisapproved(){}
