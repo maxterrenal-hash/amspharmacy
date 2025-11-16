@@ -12,6 +12,8 @@
       --text-main: #111827;
       --text-muted: #6b7280;
       --border: #e5e7eb;
+      --error: #dc2626;
+      --card-bg: #ffffff;
     }
 
     body {
@@ -21,13 +23,6 @@
       overflow: hidden;
       color: var(--text-main);
       background: #f3f4f6;
-    }
-
-    /* LAYOUT */
-    .layout {
-      display: flex;
-      height: 100vh;
-      box-sizing: border-box;
     }
 
     /* HEADER */
@@ -70,10 +65,11 @@
       opacity: 0.9;
     }
 
+    /* SHELL LAYOUT */
     .content-shell {
       display: flex;
       height: 100vh;
-      padding-top: 64px; /* header height offset */
+      padding-top: 64px; /* header height */
       box-sizing: border-box;
     }
 
@@ -165,7 +161,7 @@
     }
 
     .card {
-      background: #fff;
+      background: var(--card-bg);
       padding: 12px 14px;
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.06);
@@ -215,17 +211,17 @@
 
     .btn.approve {
       background: var(--osmak-green);
-      color: white;
+      color: #fff;
     }
 
     .btn.disapprove {
       background: #dc2626;
-      color: white;
+      color: #fff;
     }
 
     .btn.delete {
       background: #6b7280;
-      color: white;
+      color: #fff;
     }
 
     .status-bar {
@@ -252,12 +248,12 @@
 
     table th {
       background: var(--osmak-green);
-      color: white;
+      color: #fff;
       font-weight: 600;
     }
 
     .error-msg {
-      color: #dc2626;
+      color: var(--error);
       font-size: 0.82rem;
       margin-top: 4px;
     }
@@ -296,7 +292,7 @@
         <h2>Pending Requests</h2>
         <div class="toolbar">
           <label for="pendingDate">Date:</label>
-          <input type="date" id="pendingDate">
+          <input type="date" id="pendingDate" />
           <button class="btn approve" onclick="loadPending()">Load Requests</button>
         </div>
         <div id="pendingStatus" class="status-bar"></div>
@@ -308,7 +304,7 @@
         <h2>For IDS Approval</h2>
         <div class="toolbar">
           <label for="idsDate">Date:</label>
-          <input type="date" id="idsDate">
+          <input type="date" id="idsDate" />
           <button class="btn approve" onclick="loadIDS()">Filter</button>
         </div>
         <div id="idsList"></div>
@@ -319,7 +315,7 @@
         <h2>Approved</h2>
         <div class="toolbar">
           <label for="approvedDate">Date:</label>
-          <input type="date" id="approvedDate">
+          <input type="date" id="approvedDate" />
           <button class="btn approve" onclick="loadApproved()">Filter</button>
         </div>
         <table id="approvedTable">
@@ -342,7 +338,7 @@
         <h2>Disapproved</h2>
         <div class="toolbar">
           <label for="disDate">Date:</label>
-          <input type="date" id="disDate">
+          <input type="date" id="disDate" />
           <button class="btn approve" onclick="loadDisapproved()">Filter</button>
         </div>
         <table id="disTable">
@@ -364,7 +360,7 @@
         <h2>Deleted Records</h2>
         <div class="toolbar">
           <label for="delDate">Date:</label>
-          <input type="date" id="delDate">
+          <input type="date" id="delDate" />
           <button class="btn approve" onclick="loadDeleted()">Filter</button>
         </div>
         <table id="delTable">
@@ -385,9 +381,9 @@
         <h2>Data Analysis</h2>
         <div class="toolbar">
           <label for="fromDate">From:</label>
-          <input type="date" id="fromDate">
+          <input type="date" id="fromDate" />
           <label for="toDate">To:</label>
-          <input type="date" id="toDate">
+          <input type="date" id="toDate" />
           <button class="btn approve" onclick="runAnalysis()">Go</button>
         </div>
         <div id="analysisPanel"></div>
@@ -399,7 +395,7 @@
 // === CONFIG: Deployed Apps Script Web App URL ===
 const API_URL = "https://script.google.com/macros/s/AKfycbwfxsIITaDI2xL_Ug4_ttwiCCxrUIlgQVWlNLY_nA-J7lV1KkYHSUYl4qSvBrrH-AOEnw/exec";
 
-// Generic API wrapper: NEVER throws to callers, always returns {ok, data|error}
+// Generic API wrapper: NEVER throws to callers, always returns { ok, data|rows|error }
 async function api(action, payload = {}) {
   try {
     const res = await fetch(API_URL, {
@@ -422,80 +418,98 @@ async function api(action, payload = {}) {
       return { ok: false, error: "Invalid JSON from backend" };
     }
 
-    // If backend sends {ok:false,...}, preserve it; otherwise wrap
-    if (data && data.ok === false) return data;
-    return { ok: true, data };
+    // If backend already uses { ok: true/false, ... }, pass through unchanged
+    if (typeof data === "object" && data !== null && Object.prototype.hasOwnProperty.call(data, "ok")) {
+      return data;
+    }
 
+    // Otherwise, treat as success payload wrapper
+    return { ok: true, data };
   } catch (err) {
     console.error("Network/API call failed:", err);
     return { ok: false, error: "Network error" };
   }
 }
 
+// Tab switching
 function showSection(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  const target = document.getElementById(id);
+  if (target) target.classList.add("active");
 
   if (btn) {
-    document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-tab'));
-    btn.classList.add('active-tab');
+    document.querySelectorAll(".sidebar button").forEach(b => b.classList.remove("active-tab"));
+    btn.classList.add("active-tab");
   }
 }
 
 // --- Pending ---
 async function loadPending() {
-  const date = document.getElementById('pendingDate').value;
-  const list = document.getElementById('pendingList');
-  const status = document.getElementById('pendingStatus');
+  const dateInput = document.getElementById("pendingDate");
+  const list = document.getElementById("pendingList");
+  const status = document.getElementById("pendingStatus");
+
+  if (!dateInput || !list || !status) {
+    console.error("loadPending: required DOM nodes are missing");
+    return;
+  }
+
+  const date = dateInput.value;
 
   try {
     if (!date) {
       list.innerHTML = '<p class="error-msg">Please select a date.</p>';
-      status.textContent = '';
+      status.textContent = "";
       return;
     }
 
     list.innerHTML = '<p class="empty-msg">Loading…</p>';
-    status.textContent = 'Contacting server…';
+    status.textContent = "Contacting server…";
 
-    const resp = await api('getPending', { date });
+    const resp = await api("getPending", { date });
 
     if (!resp.ok) {
-      console.error('loadPending failed (backend/api):', resp.error);
+      // IMPORTANT: do NOT throw here; surface error to UI instead
+      const msg = resp.error || "Unknown backend error";
+      console.error("Backend getPending failed:", msg);
       list.innerHTML = '<p class="error-msg">Error loading data from backend.</p>';
-      status.textContent = resp.error ? `Backend / network error: ${resp.error}` : 'Unknown backend error.';
+      status.textContent = `Backend / network error: ${msg}`;
       return;
     }
 
-    const data = resp.data || {};
-    const rows = Array.isArray(data.rows) ? data.rows : [];
+    // Backend may return { ok:true, rows:[...] } or { ok:true, data:{rows:[...]} }
+    const rows = Array.isArray(resp.rows)
+      ? resp.rows
+      : Array.isArray(resp.data?.rows)
+        ? resp.data.rows
+        : [];
 
-    if (rows.length === 0) {
+    if (!Array.isArray(rows) || rows.length === 0) {
       list.innerHTML = '<p class="empty-msg">No pending requests for this date.</p>';
-      status.textContent = '0 records.';
+      status.textContent = "0 records.";
       return;
     }
 
     status.textContent = `${rows.length} pending request(s).`;
-    list.innerHTML = '';
+    list.innerHTML = "";
 
     rows.forEach(row => {
-      const card = document.createElement('div');
-      card.className = 'card';
+      const card = document.createElement("div");
+      card.className = "card";
 
-      const drugType = row['Drug Type'] || '';
-      const tagLabel = drugType ? drugType : 'Monitored';
-      const ts = row['Timestamp'] || '';
+      const drugType = row["Drug Type"] || "";
+      const tagLabel = drugType || "Monitored";
+      const ts = row["Timestamp"] || "";
 
       card.innerHTML = `
         <div class="card-header">
-          <div class="patient-name">${row['Patient Name'] || 'Unknown patient'}</div>
+          <div class="patient-name">${row["Patient Name"] || "Unknown patient"}</div>
           <span class="tag">${tagLabel}</span>
         </div>
-        <div class="card-body-row">Drug: <strong>${row['Drug'] || '-'}</strong></div>
-        <div class="card-body-row">Dose: ${row['Dose'] || '-'} | Freq: ${row['Frequency'] || '-'} | Duration: ${row['Duration'] || '-'}</div>
-        <div class="card-body-row">Diagnosis: ${row['Diagnosis'] || '-'}</div>
-        <div class="card-body-row">Resident: ${row['Resident Name'] || '-'} | Request Date: ${row['Request Date'] || '-'}</div>
+        <div class="card-body-row">Drug: <strong>${row["Drug"] || "-"}</strong></div>
+        <div class="card-body-row">Dose: ${row["Dose"] || "-"} | Freq: ${row["Frequency"] || "-"} | Duration: ${row["Duration"] || "-"}</div>
+        <div class="card-body-row">Diagnosis: ${row["Diagnosis"] || "-"}</div>
+        <div class="card-body-row">Resident: ${row["Resident Name"] || "-"} | Request Date: ${row["Request Date"] || "-"}</div>
         <div class="card-actions">
           <button class="btn approve" onclick="approveRow('${ts}')">Approve</button>
           <button class="btn disapprove" onclick="disapproveRow('${ts}')">Disapprove</button>
@@ -505,76 +519,168 @@ async function loadPending() {
       list.appendChild(card);
     });
   } catch (err) {
-    console.error('loadPending failed (JS exception):', err);
+    console.error("loadPending: unexpected JS error", err);
     list.innerHTML = '<p class="error-msg">Unexpected error while loading pending requests.</p>';
-    status.textContent = 'Unexpected frontend error – see console for details.';
+    status.textContent = "Unexpected frontend error – see console for details.";
   }
 }
 
-// Action wrappers – these assume backend finds rows by Timestamp
-async function approveRow(id) {
-  const resp = await api('approveRow', { id });
+// --- Actions assuming backend finds rows by Timestamp ---
+async function approveRow(timestamp) {
+  const resp = await api("approveRow", { id: timestamp });
   if (!resp.ok) {
-    alert('Failed to approve: ' + (resp.error || 'Unknown error'));
+    alert("Failed to approve: " + (resp.error || "Unknown error"));
     return;
   }
-  await loadPending();
+  loadPending();
 }
 
-async function disapproveRow(id) {
-  const resp = await api('disapproveRow', { id });
+async function disapproveRow(timestamp) {
+  const resp = await api("disapproveRow", { id: timestamp });
   if (!resp.ok) {
-    alert('Failed to disapprove: ' + (resp.error || 'Unknown error'));
+    alert("Failed to disapprove: " + (resp.error || "Unknown error"));
     return;
   }
-  await loadPending();
+  loadPending();
 }
 
-async function deleteRow(id) {
-  if (!confirm('Delete this request?')) return;
-  const resp = await api('deleteRow', { id });
+async function deleteRow(timestamp) {
+  if (!confirm("Delete this request?")) return;
+  const resp = await api("deleteRow", { id: timestamp });
   if (!resp.ok) {
-    alert('Failed to delete: ' + (resp.error || 'Unknown error'));
+    alert("Failed to delete: " + (resp.error || "Unknown error"));
     return;
   }
-  await loadPending();
+  loadPending();
 }
 
-// Stubs for other sections – to be wired to backend later
+// --- Stubs for other sections (to be wired later) ---
 function loadIDS() {
-  document.getElementById('idsList').innerHTML = '<div class="card">TODO: Wire IDS backend.</div>';
+  const date = document.getElementById("idsDate").value;
+  const list = document.getElementById("idsList");
+  if (!date) {
+    list.innerHTML = '<p class="error-msg">Select a date.</p>';
+    return;
+  }
+  list.innerHTML = '<p>Loading…</p>';
+  api("getPending", { date }).then(resp => {
+    if (!resp.ok) {
+      list.innerHTML = '<p class="error-msg">Backend error.</p>';
+      return;
+    }
+    const rows = resp.rows || resp.data?.rows || [];
+    if (!rows.length) {
+      list.innerHTML = '<p class="empty-msg">No IDS items.</p>';
+      return;
+    }
+    list.innerHTML = rows.map(r => `<div class="card"><b>${r["Patient Name"]}</b><br>${r["Drug"]}<br><button class='btn approve'>Send</button></div>`).join("");
+  });
 }
 
 function loadApproved() {
-  // TODO: implement
+  const date = document.getElementById("approvedDate").value;
+  const tbody = document.querySelector('#approvedTable tbody');
+  if (!date) { tbody.innerHTML = '<tr><td colspan="6">Select date</td></tr>'; return; }
+  tbody.innerHTML = '<tr><td colspan="6">Loading…</td></tr>';
+  api("getApproved", { date }).then(resp => {
+    if (!resp.ok) { tbody.innerHTML = '<tr><td colspan="6">Backend error</td></tr>'; return; }
+    const rows = resp.rows || resp.data?.rows || [];
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6">No records</td></tr>'; return; }
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td>${r["Patient Name"]||"-"}</td>
+        <td>${r["Drug"]||"-"}</td>
+        <td>${r["Dose"]||"-"}</td>
+        <td>${r["Resident Name"]||"-"}</td>
+        <td>${r["Request Date"]||"-"}</td>
+        <td><button class='btn delete' onclick="deleteRow('${r["Timestamp"]}')">Delete</button></td>
+      </tr>`).join('');
+  });
 }
 
 function loadDisapproved() {
-  // TODO: implement
+  const date = document.getElementById("disDate").value;
+  const tbody = document.querySelector('#disTable tbody');
+  if (!date) { tbody.innerHTML = '<tr><td colspan="5">Select date</td></tr>'; return; }
+  tbody.innerHTML = '<tr><td colspan="5">Loading…</td></tr>';
+  api("getDisapproved", { date }).then(resp => {
+    if (!resp.ok) { tbody.innerHTML = '<tr><td colspan="5">Backend error</td></tr>'; return; }
+    const rows = resp.rows || resp.data?.rows || [];
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5">No records</td></tr>'; return; }
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td>${r["Patient Name"]||"-"}</td>
+        <td>${r["Drug"]||"-"}</td>
+        <td>${r["Disapproval Reason"]||"-"}</td>
+        <td>${r["Request Date"]||"-"}</td>
+        <td><button class='btn delete' onclick="deleteRow('${r["Timestamp"]}')">Delete</button></td>
+      </tr>`).join('');
+  });
 }
 
 function loadDeleted() {
-  // TODO: implement
+  const date = document.getElementById("delDate").value;
+  const tbody = document.querySelector('#delTable tbody');
+  if (!date) { tbody.innerHTML = '<tr><td colspan="4">Select date</td></tr>'; return; }
+  tbody.innerHTML = '<tr><td colspan="4">Loading…</td></tr>';
+  api("getDeleted", { date }).then(resp => {
+    if (!resp.ok) { tbody.innerHTML = '<tr><td colspan="4">Backend error</td></tr>'; return; }
+    const rows = resp.rows || resp.data?.rows || [];
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4">No records</td></tr>'; return; }
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td>${r["Patient Name"]||"-"}</td>
+        <td>${r["Drug"]||"-"}</td>
+        <td>${r["Request Date"]||"-"}</td>
+        <td>${r["Moved On"]||"-"}</td>
+      </tr>`).join('');
+  });
 }
 
 function runAnalysis() {
-  document.getElementById('analysisPanel').innerHTML = '<p class="empty-msg">Analysis wiring TODO.</p>';
+  const panel = document.getElementById("analysisPanel");
+  if (panel) panel.innerHTML = '<p class="empty-msg">Analysis wiring TODO.</p>';
 }
 
-// Test helper – run from console to verify API wiring
-async function runApiSelfTest() {
-  console.log('Running API self-test…');
-  const resp = await api('getPending', { date: '1900-01-01' });
-  if (!resp.ok) {
-    console.error('Self-test failed. Error:', resp.error);
-    console.error('Likely causes:');
-    console.error('- Web App not deployed as latest version');
-    console.error('- Access is not set to "Anyone"');
-    console.error('- API_URL mismatch');
-  } else {
-    console.log('Self-test OK. Raw data:', resp.data);
-  }
+// --- Simple frontend "tests" you can run from console ---
+function test_loadPending_withEmptyDate() {
+  document.getElementById("pendingDate").value = "";
+  loadPending();
 }
+
+async function test_loadPending_withFakeBackend() {
+  const originalApi = api;
+  window.api = async () => ({ ok: true, rows: [
+    {
+      "Timestamp": "T1",
+      "Patient Name": "Test Patient",
+      "Drug": "Ceftriaxone",
+      "Dose": "1 g IV",
+      "Frequency": "q24",
+      "Duration": "7",
+      "Diagnosis": "Pneumonia",
+      "Resident Name": "Dr. Test",
+      "Request Date": "2099-01-01",
+      "Drug Type": "Restricted"
+    }
+  ] });
+  document.getElementById("pendingDate").value = "2099-01-01";
+  await loadPending();
+  window.api = originalApi;
+}
+
+async function test_loadPending_backendError() {
+  const originalApi = api;
+  window.api = async () => ({ ok: false, error: "Simulated backend failure" });
+  document.getElementById("pendingDate").value = "2099-01-01";
+  await loadPending();
+  window.api = originalApi;
+}
+
+// Clarifying question for expected behavior:
+// When backend fails (network or 500), do you prefer the last successful
+// list to remain visible, or should the list be cleared and replaced with
+// an explicit error message (current behavior)?
 </script>
 
 </body>
