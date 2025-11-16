@@ -1,486 +1,498 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AMS Request System – Pharmacy</title>
-  <style>
-    :root {
-      --osmak-green: #009a3e;
-      --osmak-green-dark: #007530;
-      --osmak-gray: #f7f7f7;
-      --text-main: #111827;
-      --text-muted: #6b7280;
-      --border: #e5e7eb;
-      --error: #dc2626;
-      --card-bg: #ffffff;
-    }
-    body {
-      font-family: system-ui, sans-serif;
-      margin: 0;
-      height: 100vh;
-      overflow: hidden;
-      color: var(--text-main);
-      background: #f3f4f6;
-    }
-    header {
-      width: 100%; display: flex; align-items: center; gap: 1rem;
-      background: var(--osmak-green); color: #fff;
-      padding: 0.75rem 1rem; position: fixed; top: 0; left: 0;
-      z-index: 10; border-radius: 0 0 0.75rem 0.75rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-    header img { height: 48px; width: auto; }
-    header .title-block { display: flex; flex-direction: column; line-height: 1.2; }
-    header .title-block span.title {
-      font-size: 1.1rem; letter-spacing: 0.04em;
-      text-transform: uppercase; font-weight: 700;
-    }
-    header .title-block span.subtitle {
-      font-size: 0.8rem; opacity: 0.9;
-    }
-    .content-shell {
-      display: flex; height: 100vh; padding-top: 64px;
-    }
-    .sidebar {
-      width: 220px; background: var(--osmak-gray);
-      padding: 16px; box-shadow: 2px 0 4px rgba(0,0,0,0.08);
-    }
-    .sidebar h2 {
-      font-size: 0.9rem; font-weight: 700; color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 12px;
-    }
-    .sidebar button {
-      width: 100%; margin-bottom: 8px; padding: 8px 10px;
-      border: 1px solid var(--border); background: #fff;
-      color: var(--text-main); cursor: pointer; border-radius: 6px;
-      font-size: 0.85rem; text-align: left;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
-    }
-    .sidebar button:hover {
-      background: #e6f5ec; border-color: var(--osmak-green);
-    }
-    .sidebar button.active-tab {
-      background: var(--osmak-green); color: #fff;
-      border-color: var(--osmak-green); font-weight: 600;
-    }
-    .main {
-      flex: 1; padding: 16px 24px; overflow-y: auto;
-    }
-    .section { display: none; }
-    .section.active { display: block; }
-    h2 { margin-top: 0; font-size: 1.1rem; }
-    label { font-size: 0.85rem; color: var(--text-muted); margin-right: 6px; }
-    input[type="date"] {
-      padding: 4px 6px; border-radius: 4px; border: 1px solid var(--border);
-      font-size: 0.85rem;
-    }
-    .toolbar {
-      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-      flex-wrap: wrap;
-    }
-    .card {
-      background: var(--card-bg); padding: 12px 14px; border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.06); margin-bottom: 12px;
-      border: 1px solid #e5e7eb; font-size: 0.86rem;
-    }
-    .card-header {
-      display: flex; justify-content: space-between; margin-bottom: 4px;
-    }
-    .card-header .patient-name { font-weight: 600; font-size: 0.95rem; }
-    .card-header .tag {
-      font-size: 0.7rem; padding: 2px 6px; border-radius: 999px;
-      background: #e5e7eb; color: #374151; text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    table {
-      width: 100%; border-collapse: collapse; background: #fff;
-      border-radius: 8px; overflow: hidden; margin-top: 12px;
-    }
-    table th, table td {
-      border: 1px solid #e5e7eb; padding: 6px 8px; font-size: 0.85rem;
-    }
-    table th {
-      background: var(--osmak-green); color: #fff; font-weight: 600;
-    }
-    .btn {
-      padding: 6px 10px; border: none; border-radius: 6px;
-      cursor: pointer; margin-right: 6px; font-size: 0.8rem;
-    }
-    .btn.approve { background: var(--osmak-green); color: #fff; }
-    .btn.disapprove { background: #dc2626; color: #fff; }
-    .btn.delete { background: #6b7280; color: #fff; }
-    .status-bar { margin-top: 8px; font-size: 0.8rem; color: var(--text-muted); }
-    .error-msg { color: var(--error); font-size: 0.82rem; }
-    .empty-msg { color: var(--text-muted); font-size: 0.82rem; }
-  </style>
+<meta charset="UTF-8">
+<title>Ospital ng Makati – Antimicrobial Request System (Pharmacy)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root {
+  --osmak-green: #009a3e;
+  --osmak-green-dark: #007530;
+  --osmak-red: #dc2626;
+  --bg-main: #f5f5f5;
+  --bg-card: #ffffff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border: #d1d5db;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--osmak-green);
+  color: #fff;
+  padding: 0.75rem 1rem;
+}
+
+header img {
+  height: 48px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+header span {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: 0 1rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.tab-btn.active {
+  background: var(--osmak-green);
+  color: #fff;
+  border-color: var(--osmak-green-dark);
+}
+
+.section {
+  display: none;
+}
+.section.active {
+  display: block;
+}
+
+.card {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.tag {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.tag.monitored { background: rgba(0,154,62,0.15); color: var(--osmak-green-dark); }
+.tag.restricted { background: rgba(220,38,38,0.15); color: var(--osmak-red); }
+
+.actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn {
+  border: none;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.btn.approve { background: var(--osmak-green); color: white; }
+.btn.reject { background: var(--osmak-red); color: white; }
+.btn.for-ids { background: #f59e0b; color: #fff; }
+.btn.delete { background: #6b7280; color: #fff; }
+
+.search-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+.search-row input,
+.search-row select {
+  padding: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+}
+
+.list-container {
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.list-item {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-box {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  width: 320px;
+  max-width: 90%;
+}
+.confirm-box button {
+  margin-top: 0.5rem;
+}
+
+</style>
 </head>
+
 <body>
 
 <header>
-  <img src="https://maxterrenal-hash.github.io/justculture/osmak-logo.png" alt="Ospital ng Makati" />
-  <div class="title-block">
-    <span class="title">Ospital ng Makati</span>
-    <span class="subtitle">AMS Request System – Pharmacy</span>
+  <img src="https://maxterrenal-hash.github.io/justculture/osmak-logo.png">
+  <div>
+    <h1>Antimicrobial Request System</h1>
+    <span>Pharmacy Module</span>
   </div>
 </header>
 
-<div class="content-shell">
-  <div class="sidebar">
-    <h2>Sections</h2>
-    <button class="active-tab" onclick="showSection('pending', this)">Pending</button>
-    <button onclick="showSection('ids', this)">For IDS Approval</button>
-    <button onclick="showSection('approved', this)">Approved</button>
-    <button onclick="showSection('disapproved', this)">Disapproved</button>
-    <button onclick="showSection('deleted', this)">Deleted</button>
-    <button onclick="showSection('analysis', this)">Data Analysis</button>
+<div class="main">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="pending">Pending</button>
+    <button class="tab-btn" data-tab="approved">Approved</button>
+    <button class="tab-btn" data-tab="rejected">Rejected</button>
+    <button class="tab-btn" data-tab="dispensed">Dispensed</button>
+    <button class="tab-btn" data-tab="ids">IDS Pending</button>
   </div>
 
-  <div class="main">
-    <div id="pending" class="section active">
-      <h2>Pending Requests</h2>
-      <div class="toolbar">
-        <label for="pendingDate">Date:</label>
-        <input type="date" id="pendingDate" />
-        <button class="btn approve" type="button" onclick="loadPending()">Load</button>
-      </div>
-      <div id="pendingStatus" class="status-bar"></div>
-      <div id="pendingList"></div>
+  <!-- Pending Section -->
+  <div class="section active" id="pending">
+    <div class="search-row">
+      <input type="date" id="pendingDate">
+      <input type="text" id="pendingSearch" placeholder="Search Hospital Number">
     </div>
+    <div id="pendingList"></div>
+  </div>
 
-    <div id="ids" class="section">
-      <h2>For IDS Approval</h2>
-      <div class="toolbar">
-        <label for="idsDate">Date:</label>
-        <input type="date" id="idsDate" />
-        <button class="btn approve" type="button" onclick="loadIDS()">Load</button>
-      </div>
-      <div id="idsStatus" class="status-bar"></div>
-      <div id="idsList"></div>
+  <!-- Approved Section -->
+  <div class="section" id="approved">
+    <div class="search-row">
+      <input type="date" id="approvedDate">
+      <input type="text" id="approvedSearch" placeholder="Search Hospital Number">
     </div>
+    <div class="list-container" id="approvedList"></div>
+  </div>
 
-    <div id="approved" class="section">
-      <h2>Approved</h2>
-      <div class="toolbar">
-        <label for="approvedDate">Date:</label>
-        <input type="date" id="approvedDate" />
-        <button class="btn approve" type="button" onclick="loadApproved()">Load</button>
-      </div>
-      <div id="approvedStatus" class="status-bar"></div>
-      <div id="approvedTableWrapper"></div>
+  <!-- Rejected Section -->
+  <div class="section" id="rejected">
+    <div class="search-row">
+      <input type="date" id="rejectedDate">
+      <input type="text" id="rejectedSearch" placeholder="Search Hospital Number">
     </div>
+    <div class="list-container" id="rejectedList"></div>
+  </div>
 
-    <div id="disapproved" class="section">
-      <h2>Disapproved</h2>
-      <div class="toolbar">
-        <label for="disapprovedDate">Date:</label>
-        <input type="date" id="disapprovedDate" />
-        <button class="btn approve" type="button" onclick="loadDisapproved()">Load</button>
-      </div>
-      <div id="disapprovedStatus" class="status-bar"></div>
-      <div id="disapprovedTableWrapper"></div>
+  <!-- Dispensed Section -->
+  <div class="section" id="dispensed">
+    <div class="search-row">
+      <input type="date" id="dispensedDate">
+      <input type="text" id="dispensedSearch" placeholder="Search Hospital Number">
     </div>
+    <div class="list-container" id="dispensedList"></div>
+  </div>
 
-    <div id="deleted" class="section">
-      <h2>Deleted</h2>
-      <div class="toolbar">
-        <label for="deletedDate">Date:</label>
-        <input type="date" id="deletedDate" />
-        <button class="btn approve" type="button" onclick="loadDeleted()">Load</button>
-      </div>
-      <div id="deletedStatus" class="status-bar"></div>
-      <div id="deletedTableWrapper"></div>
+  <!-- IDS Pending -->
+  <div class="section" id="ids">
+    <div class="search-row">
+      <select id="idsFilter">
+        <option value="">Filter by IDS</option>
+        <option>Dr. Christopher John Tibayan</option>
+        <option>Dr. Paulo Garcia</option>
+        <option>Dr. Jelly Ann Gozun-Recuenco</option>
+        <option>Dr. Michelle Carandang-Cuvin</option>
+      </select>
+      <input type="date" id="idsDate">
     </div>
+    <div class="list-container" id="idsList"></div>
+  </div>
 
-    <div id="analysis" class="section">
-      <h2>Data Analysis</h2>
-      <!-- Placeholder for future analysis UI -->
-      <p class="empty-msg">Data analysis module coming next.</p>
-    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="confirm-backdrop" id="confirmBackdrop">
+  <div class="confirm-box">
+    <p id="confirmMsg"></p>
+    <button id="confirmYes" class="btn approve">Yes</button>
+    <button id="confirmNo" class="btn reject">Cancel</button>
   </div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwfkIm4H4nTY6ROatXknk61v67bm_n2HtDtJWvy5BtAEhTHywqkE3K9XaXOuiLLWsHl/exec";
+// === CONFIG ===
+const API = "https://script.google.com/macros/s/AKfycbyFmc29khGH26fyQKgacNudxD3zA7QWN3JVB128afMnzzoY83KyH7Ddlrtg6G7hmxe8/exec";
 
-async function api(params) {
-  const url = API_URL + "?" + new URLSearchParams(params).toString();
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    return data;
-  } catch (e) {
-    return { ok: false, error: "Network error" };
-  }
+let ALL_DATA = [];
+let pendingAction = null;
+
+// Utility: fetch all entries
+async function loadData() {
+  const res = await fetch(API);
+  const data = await res.json();
+  ALL_DATA = data.entries || [];
+  renderAll();
 }
 
-function showSection(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  const section = document.getElementById(id);
-  if (section) section.classList.add('active');
-
-  document.querySelectorAll('.sidebar button').forEach(b => b.classList.remove('active-tab'));
-  if (btn) btn.classList.add('active-tab');
+// Utility: show confirmation modal
+function confirmAction(msg, callback) {
+  document.getElementById("confirmMsg").textContent = msg;
+  pendingAction = callback;
+  document.getElementById("confirmBackdrop").style.display = "flex";
 }
+document.getElementById("confirmNo").onclick = () => {
+  document.getElementById("confirmBackdrop").style.display = "none";
+  pendingAction = null;
+};
+document.getElementById("confirmYes").onclick = () => {
+  if (pendingAction) pendingAction();
+  document.getElementById("confirmBackdrop").style.display = "none";
+};
 
-async function loadPending() {
-  const dateInput = document.getElementById('pendingDate');
-  const date = dateInput.value;
-  const list = document.getElementById('pendingList');
-  const status = document.getElementById('pendingStatus');
 
-  list.innerHTML = "";
-  status.textContent = "Loading...";
+// === RENDERERS ===
 
-  if (!date) {
-    status.textContent = "Please select a date.";
-    return;
-  }
+// Pending Cards
+function renderPending() {
+  const date = document.getElementById("pendingDate").value;
+  const search = document.getElementById("pendingSearch").value.trim();
 
-  const res = await api({ action: "getPending", date });
+  const container = document.getElementById("pendingList");
+  container.innerHTML = "";
 
-  if (!res.ok) {
-    status.textContent = "Error: " + res.error;
-    return;
-  }
+  const data = ALL_DATA.filter(e => {
+    const d = e.data;
+    if (!d) return false;
+    if (date && d.reqDate !== date) return false;
+    if (search && !String(d.hospitalNumber).includes(search)) return false;
+    if (d.status === "approved" || d.status === "disapproved" || 
+        d.status === "dispensed" || d.status === "for_ids_approval") return false;
+    return true;
+  });
 
-  status.textContent = res.rows.length + " matching request(s).";
+  data.forEach(e => {
+    const d = e.data;
+    const card = document.createElement("div");
+    card.className = "card";
 
-  if (res.rows.length === 0) {
-    list.innerHTML = '<div class="empty-msg">No pending requests for this date.</div>';
-    return;
-  }
-
-  res.rows.forEach(row => {
-    const card = document.createElement('div');
-    card.className = 'card';
     card.innerHTML = `
       <div class="card-header">
-        <span class="patient-name">${row["Patient Name"] || ''}</span>
-        <span class="tag">${row["Drug Type"] || ''}</span>
+        <strong>${d.patientName} (${d.age} y)</strong>
+        <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
       </div>
-      <div><strong>Diagnosis:</strong> ${row["Diagnosis"] || ''}</div>
-      <div><strong>Drug:</strong> ${row["Drug"] || ''}</div>
-      <div><strong>Indication:</strong> ${row["Indication"] || ''}</div>
-      <div style="margin-top:8px;">
-        <button class="btn approve" type="button" onclick="approvePending('${row["Timestamp"]}')">Approve</button>
-        <button class="btn disapprove" type="button" onclick="disapprovePending('${row["Timestamp"]}')">Disapprove</button>
-        <button class="btn delete" type="button" onclick="deletePending('${row["Timestamp"]}')">Delete</button>
+      <div><strong>Hospital #:</strong> ${d.hospitalNumber}</div>
+      <div><strong>Ward:</strong> ${d.ward}</div>
+      <div><strong>Diagnosis:</strong> ${d.diagnosis}</div>
+      <div><strong>Drug:</strong> ${d.antimicrobial} (${d.dose}, ${d.frequency}, ${d.duration}d)</div>
+      <div><strong>Indication:</strong> ${d.indication}</div>
+      <div><strong>Resident:</strong> ${d.residentName}</div>
+      <div><strong>Date:</strong> ${d.reqDate}</div>
+
+      <div class="actions">
+        ${
+          d.drugType === "Restricted"
+          ? `
+              <button class="btn for-ids">For IDS Approval</button>
+              <button class="btn delete">Delete</button>
+            `
+          : `
+              <button class="btn approve">Approved</button>
+              <button class="btn reject">Disapproved</button>
+              <button class="btn delete">Delete</button>
+            `
+        }
+        <label><input type="checkbox" class="dispCheck"> Dispensed</label>
       </div>
     `;
-    list.appendChild(card);
+
+    // Button actions
+    const approveBtn = card.querySelector(".approve");
+    if (approveBtn) approveBtn.onclick = () => {
+      confirmAction("Approve this request?", () => updateStatus(e.fileId, "approved"));
+    };
+
+    const rejectBtn = card.querySelector(".reject");
+    if (rejectBtn) rejectBtn.onclick = () => {
+      confirmAction("Disapprove this request?", () => updateStatus(e.fileId, "disapproved"));
+    };
+
+    const forIdsBtn = card.querySelector(".for-ids");
+    if (forIdsBtn) forIdsBtn.onclick = () => {
+      confirmAction("Send to IDS for approval?", () => updateStatus(e.fileId, "for_ids_approval"));
+    };
+
+    const deleteBtn = card.querySelector(".delete");
+    deleteBtn.onclick = () => {
+      confirmAction("Delete this entry?", () => deleteEntry(e.fileId));
+    };
+
+    const dispCheck = card.querySelector(".dispCheck");
+    dispCheck.onchange = () => {
+      confirmAction("Mark as dispensed?", () => markDispensed(e.fileId));
+    };
+
+    container.appendChild(card);
   });
 }
 
-// --- ACTIONS FOR PENDING ---
-async function approvePending(ts) {
-  const res = await api({ action: "approveRow", id: ts });
-  if (!res.ok) {
-    alert("Approve failed: " + res.error);
-    return;
-  }
-  loadPending();
-}
 
-async function deletePending(ts) {
-  const res = await api({ action: "deleteRow", id: ts });
-  if (!res.ok) {
-    alert("Delete failed: " + res.error);
-    return;
-  }
-  loadPending();
-}
+// List Renderer for Approved / Rejected / Dispensed / IDS
+function renderList(tab, listId, filters) {
+  const date = document.getElementById(filters.dateField).value;
+  const search = document.getElementById(filters.searchField).value.trim();
+  const ids = filters.idsField ? document.getElementById(filters.idsField).value : "";
 
-async function disapprovePending(ts) {
-  const reason = prompt("Reason for disapproval:");
-  const res = await api({ action: "disapproveRow", id: ts, reason: reason || "" });
-  if (!res.ok) {
-    alert("Disapprove failed: " + res.error);
-    return;
-  }
-  loadPending();
-}
+  const container = document.getElementById(listId);
+  container.innerHTML = "";
 
-// --- PLACEHOLDER LOADERS FOR OTHER SECTIONS ---
-async function loadIDS() {
-  const date = document.getElementById('idsDate').value;
-  const status = document.getElementById('idsStatus');
-  const list = document.getElementById('idsList');
-  status.textContent = "Loading...";
-  list.innerHTML = "";
-  if (!date) {
-    status.textContent = "Please select a date.";
-    return;
-  }
-  const res = await api({ action: "getIDS", date });
-  if (!res.ok) {
-    status.textContent = "Error: " + res.error;
-    return;
-  }
-  status.textContent = res.rows.length + " matching request(s).";
-  if (!res.rows.length) {
-    list.innerHTML = '<div class="empty-msg">No IDS approvals for this date.</div>';
-  }
-}
+  let data = ALL_DATA.filter(e => {
+    const d = e.data;
+    if (!d) return false;
 
-async function loadApproved() {
-  const date = document.getElementById('approvedDate').value;
-  const status = document.getElementById('approvedStatus');
-  const wrap = document.getElementById('approvedTableWrapper');
-  status.textContent = "Loading...";
-  wrap.innerHTML = "";
-  if (!date) {
-    status.textContent = "Please select a date.";
-    return;
-  }
-  const res = await api({ action: "getApproved", date });
-  if (!res.ok) {
-    status.textContent = "Error: " + res.error;
-    return;
-  }
-  status.textContent = res.rows.length + " matching request(s).";
-  if (!res.rows.length) {
-    wrap.innerHTML = '<div class="empty-msg">No approved requests for this date.</div>';
-    return;
-  }
-  const table = document.createElement('table');
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Timestamp</th>
-        <th>Patient</th>
-        <th>Drug</th>
-        <th>Indication</th>
-        <th>Ward</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  `;
-  const tbody = table.querySelector('tbody');
-  res.rows.forEach(r => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r["Timestamp"] || ''}</td>
-      <td>${r["Patient Name"] || ''}</td>
-      <td>${r["Drug"] || ''}</td>
-      <td>${r["Indication"] || ''}</td>
-      <td>${r["Ward"] || ''}</td>
+    if (filters.matchStatus && d.status !== filters.matchStatus) return false;
+    if (filters.matchDrugType && d.drugType !== filters.matchDrugType) return false;
+
+    if (filters.excludeStatuses && filters.excludeStatuses.includes(d.status)) return false;
+
+    if (date && d.reqDate !== date) return false;
+    if (search && !String(d.hospitalNumber).includes(search)) return false;
+
+    if (ids && d.idSpecialist !== ids) return false;
+
+    return true;
+  });
+
+  data.slice(0, 200).forEach(e => {
+    const d = e.data;
+
+    const row = document.createElement("div");
+    row.className = "list-item";
+    row.innerHTML = `
+      <div>
+        <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
+        ${d.antimicrobial} – ${d.dose} (${d.frequency})
+      </div>
+      <div>${d.reqDate}</div>
     `;
-    tbody.appendChild(tr);
+
+    container.appendChild(row);
   });
-  wrap.appendChild(table);
 }
 
-async function loadDisapproved() {
-  const date = document.getElementById('disapprovedDate').value;
-  const status = document.getElementById('disapprovedStatus');
-  const wrap = document.getElementById('disapprovedTableWrapper');
-  status.textContent = "Loading...";
-  wrap.innerHTML = "";
-  if (!date) {
-    status.textContent = "Please select a date.";
-    return;
-  }
-  const res = await api({ action: "getDisapproved", date });
-  if (!res.ok) {
-    status.textContent = "Error: " + res.error;
-    return;
-  }
-  status.textContent = res.rows.length + " matching request(s).";
-  if (!res.rows.length) {
-    wrap.innerHTML = '<div class="empty-msg">No disapproved requests for this date.</div>';
-    return;
-  }
-  const table = document.createElement('table');
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Timestamp</th>
-        <th>Patient</th>
-        <th>Drug</th>
-        <th>Indication</th>
-        <th>Ward</th>
-        <th>Reason</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  `;
-  const tbody = table.querySelector('tbody');
-  res.rows.forEach(r => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r["Timestamp"] || ''}</td>
-      <td>${r["Patient Name"] || ''}</td>
-      <td>${r["Drug"] || ''}</td>
-      <td>${r["Indication"] || ''}</td>
-      <td>${r["Ward"] || ''}</td>
-      <td>${r["Disapproval Reason"] || ''}</td>
-    `;
-    tbody.appendChild(tr);
+
+// === Update actions ===
+async function updateStatus(fileId, status) {
+  await fetch(API, {
+    method: "POST",
+    body: JSON.stringify({ action: "updateStatus", fileId, status })
   });
-  wrap.appendChild(table);
+  loadData();
 }
 
-async function loadDeleted() {
-  const date = document.getElementById('deletedDate').value;
-  const status = document.getElementById('deletedStatus');
-  const wrap = document.getElementById('deletedTableWrapper');
-  status.textContent = "Loading...";
-  wrap.innerHTML = "";
-  if (!date) {
-    status.textContent = "Please select a date.";
-    return;
-  }
-  const res = await api({ action: "getDeleted", date });
-  if (!res.ok) {
-    status.textContent = "Error: " + res.error;
-    return;
-  }
-  status.textContent = res.rows.length + " matching request(s).";
-  if (!res.rows.length) {
-    wrap.innerHTML = '<div class="empty-msg">No deleted requests for this date.</div>';
-    return;
-  }
-  const table = document.createElement('table');
-  table.innerHTML = `
-    <thead>
-      <tr>
-        <th>Timestamp</th>
-        <th>Patient</th>
-        <th>Drug</th>
-        <th>Indication</th>
-        <th>Ward</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  `;
-  const tbody = table.querySelector('tbody');
-  res.rows.forEach(r => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${r["Timestamp"] || ''}</td>
-      <td>${r["Patient Name"] || ''}</td>
-      <td>${r["Drug"] || ''}</td>
-      <td>${r["Indication"] || ''}</td>
-      <td>${r["Ward"] || ''}</td>
-    `;
-    tbody.appendChild(tr);
+async function markDispensed(fileId) {
+  await fetch(API, {
+    method: "POST",
+    body: JSON.stringify({ action: "markDispensed", fileId })
   });
-  wrap.appendChild(table);
+  loadData();
 }
 
-// Initialize default dates to today for convenience
-(function initDates() {
-  const today = new Date().toISOString().slice(0, 10);
-  const ids = [
-    'pendingDate', 'idsDate', 'approvedDate',
-    'disapprovedDate', 'deletedDate'
-  ];
-  ids.forEach(id => {
-    const input = document.getElementById(id);
-    if (input && !input.value) input.value = today;
+async function deleteEntry(fileId) {
+  await fetch(API, {
+    method: "POST",
+    body: JSON.stringify({ action: "deleteEntry", fileId })
   });
-})();
+  loadData();
+}
+
+
+// === TAB SWITCHING ===
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    document.querySelectorAll(".section").forEach(sc => sc.classList.remove("active"));
+    document.getElementById(btn.dataset.tab).classList.add("active");
+
+    renderAll();
+  };
+});
+
+
+// === RENDER ALL ===
+function renderAll() {
+  renderPending();
+
+  renderList("approved", "approvedList", {
+    dateField: "approvedDate",
+    searchField: "approvedSearch",
+    matchStatus: "approved",
+    matchDrugType: "Monitored"
+  });
+
+  renderList("rejected", "rejectedList", {
+    dateField: "rejectedDate",
+    searchField: "rejectedSearch",
+    matchStatus: "disapproved"
+  });
+
+  renderList("dispensed", "dispensedList", {
+    dateField: "dispensedDate",
+    searchField: "dispensedSearch",
+    excludeStatuses: ["approved", "disapproved", "for_ids_approval"]
+  });
+
+  renderList("ids", "idsList", {
+    dateField: "idsDate",
+    searchField: "approvedSearch", // not used here
+    matchStatus: "for_ids_approval",
+    idsField: "idsFilter"
+  });
+}
+
+
+// INIT
+window.onload = loadData;
 </script>
 
 </body>
