@@ -33,11 +33,18 @@ body {
   color: var(--text-main);
 }
 
+/* Sticky Header + Tabs */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--osmak-green);
+}
+
 header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: var(--osmak-green);
   color: #fff;
   padding: 0.75rem 1rem;
 }
@@ -45,22 +52,15 @@ header {
 header img { height: 48px; }
 header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
 
-/* ==========================================================
-   MAIN CONTAINER
-   ========================================================== */
-.main {
-  max-width: 1200px;
-  margin: 1rem auto;
-  padding: 0 1rem;
+/* Tabs Bar */
+.tabs-wrapper {
+  background: var(--osmak-green);
+  padding: 0.4rem 0.5rem;
 }
 
-/* ==========================================================
-   TABS
-   ========================================================== */
 .tabs {
   display: flex;
   gap: 0.5rem;
-  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
@@ -73,16 +73,25 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
   font-size: 0.85rem;
 }
 .tab-btn.active {
-  background: var(--osmak-green);
+  background: var(--osmak-green-dark);
   color: #fff;
   border-color: var(--osmak-green-dark);
+}
+
+/* ==========================================================
+   MAIN CONTAINER
+   ========================================================== */
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1rem;
 }
 
 .section { display: none; }
 .section.active { display: block; }
 
 /* ==========================================================
-   SEARCH / FILTER ROWS
+   SEARCH ROW
    ========================================================== */
 .search-row {
   display: flex;
@@ -141,7 +150,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
    LIST ITEMS
    ========================================================== */
 .list-container {
-  max-height: 500px;
+  max-height: 650px;
   overflow-y: auto;
   border: 1px solid var(--border);
   background: #fff;
@@ -156,14 +165,11 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
 }
 .list-item:hover { background: #fafafa; }
 
-/* ==========================================================
-   BUTTONS
-   ========================================================== */
-.actions {
+/* Action bar inside lists */
+.list-actions {
+  margin-top: 0.4rem;
   display: flex;
-  flex-wrap: wrap;
   gap: 0.4rem;
-  margin-top: 0.6rem;
 }
 
 .btn {
@@ -175,8 +181,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
 }
 .btn.approve { background: var(--osmak-green); color: white; }
 .btn.reject { background: var(--osmak-red); color: white; }
-.btn.for-ids { background: var(--amber); color: #fff; }
-.btn.delete { background: #6b7280; color: white; }
+.btn.cancel { background: #6b7280; color: white; }
 
 /* ==========================================================
    MODALS
@@ -188,7 +193,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 40;
+  z-index: 90;
 }
 
 .modal-box {
@@ -207,11 +212,13 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
   justify-content: space-between;
   align-items: center;
 }
+
 .modal-body {
   padding: 1rem;
   font-size: 0.9rem;
   line-height: 1.4rem;
 }
+
 .close-btn {
   background: none;
   border: none;
@@ -229,7 +236,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 100;
 }
 .confirm-box {
   background: #fff;
@@ -239,60 +246,26 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
 }
 
 /* ==========================================================
-   DATA ANALYSIS RESPONSIVE
+   REASON MODAL
    ========================================================== */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-@media (max-width: 800px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
-.tile {
-  padding: 1rem;
-  border-radius: 0.7rem;
-  background: white;
+#rejectReasonOther {
+  display: none;
+  margin-top: 0.6rem;
+  width: 100%;
+  padding: 0.45rem;
   border: 1px solid var(--border);
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-.tile-number {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-top: 0.4rem;
+  border-radius: 0.4rem;
 }
 
 /* ==========================================================
-   IMPORTANT: MOBILE PATCHES
+   MOBILE
    ========================================================== */
 @media (max-width: 600px) {
-
-  header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .tab-btn {
-    flex: 1 1 calc(50% - 0.4rem);
-    text-align: center;
-  }
-
+  .tabs { flex-wrap: wrap; }
+  .tab-btn { flex: 1 1 calc(50% - 4px); }
   .search-row { flex-direction: column; }
-
-  .card { padding: 0.75rem; }
-
-  .actions { flex-direction: column; }
-  .btn { width: 100%; }
-
   .list-item { flex-direction: column; align-items: flex-start; }
-
-  .modal-box {
-    width: 95%;
-    max-height: 90vh;
-  }
+  .btn { width: 100%; }
 }
 
 </style>
@@ -300,27 +273,31 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
 
 <body>
 
-<header>
-  <img src="https://maxterrenal-hash.github.io/justculture/osmak-logo.png">
-  <div>
-    <h1>Antimicrobial Request System</h1>
-    <span>Pharmacy Module</span>
-  </div>
-</header>
+<!-- STICKY TOP BAR -->
+<div class="sticky-top">
+  <header>
+    <img src="https://maxterrenal-hash.github.io/justculture/osmak-logo.png">
+    <div>
+      <h1>Antimicrobial Request System</h1>
+      <span>Pharmacy Module</span>
+    </div>
+  </header>
 
+  <div class="tabs-wrapper">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="pending">Pending</button>
+      <button class="tab-btn" data-tab="approved">Approved</button>
+      <button class="tab-btn" data-tab="rejected">Rejected</button>
+      <button class="tab-btn" data-tab="ids">IDS Approval</button>
+      <button class="tab-btn" data-tab="analysis">Data Analysis</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
 <div class="main">
 
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="pending">Pending</button>
-    <button class="tab-btn" data-tab="approved">Approved</button>
-    <button class="tab-btn" data-tab="rejected">Rejected</button>
-    <button class="tab-btn" data-tab="ids">IDS Approval</button>
-    <button class="tab-btn" data-tab="analysis">Data Analysis</button>
-  </div>
-
-  <!-- ==========================================================
-       PENDING TAB
-       ========================================================== -->
+  <!-- PENDING -->
   <div class="section active" id="pending">
     <div class="search-row">
       <input type="date" id="pendingDate">
@@ -329,9 +306,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
     <div id="pendingList"></div>
   </div>
 
-  <!-- ==========================================================
-       APPROVED TAB
-       ========================================================== -->
+  <!-- APPROVED -->
   <div class="section" id="approved">
     <div class="search-row">
       <input type="date" id="approvedDate">
@@ -340,9 +315,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
     <div class="list-container" id="approvedList"></div>
   </div>
 
-  <!-- ==========================================================
-       REJECTED TAB
-       ========================================================== -->
+  <!-- REJECTED -->
   <div class="section" id="rejected">
     <div class="search-row">
       <input type="date" id="rejectedDate">
@@ -351,9 +324,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
     <div class="list-container" id="rejectedList"></div>
   </div>
 
-  <!-- ==========================================================
-       IDS APPROVAL TAB
-       ========================================================== -->
+  <!-- IDS APPROVAL -->
   <div class="section" id="ids">
     <div class="search-row">
       <select id="idsFilter">
@@ -368,20 +339,19 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
     <div class="list-container" id="idsList"></div>
   </div>
 
-  <!-- ==========================================================
-       DATA ANALYSIS TAB
-       ========================================================== -->
+  <!-- DATA ANALYSIS -->
   <div class="section" id="analysis">
+    <!-- same content, JS will fill -->
     <div class="search-row">
       <input type="date" id="fromDate">
       <input type="date" id="toDate">
       <select id="wardFilter"></select>
-      <button class="btn approve" id="applyAnalysis">Apply Filters</button>
+      <button class="btn approve" id="applyAnalysis">Apply</button>
     </div>
 
     <div style="display:flex; gap:0.5rem; margin-bottom:0.8rem;">
       <button class="btn approve" id="exportFilteredCsv">Export Filtered CSV</button>
-      <button class="btn delete" id="exportAllCsv">Export ALL CSV</button>
+      <button class="btn cancel" id="exportAllCsv">Export ALL CSV</button>
     </div>
 
     <div class="dashboard-grid" id="analysisTiles"></div>
@@ -399,11 +369,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
 
 </div>
 
-
-<!-- ==========================================================
-     MODALS (DETAILS, PHARMACIST, CONFIRMATION, REASON)
-     ========================================================== -->
-
+<!-- DETAILS MODAL -->
 <div class="modal-backdrop" id="detailsBackdrop">
   <div class="modal-box">
     <div class="modal-header">
@@ -414,29 +380,12 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
   </div>
 </div>
 
-<div class="modal-backdrop" id="pharmacistBackdrop">
-  <div class="modal-box">
-    <div class="modal-header"><h3>Dispensed By</h3></div>
-    <div class="modal-body">
-      <label>Pharmacist Name:</label>
-      <input type="text" id="pharmacistName" class="pharm-input" style="width:100%;">
-      <button class="btn approve" id="pharmacistSubmit">Submit</button>
-      <button class="btn reject" id="pharmacistCancel">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<div class="confirm-backdrop" id="confirmBackdrop">
-  <div class="confirm-box">
-    <p id="confirmMsg"></p>
-    <button id="confirmYes" class="btn approve">Yes</button>
-    <button id="confirmNo" class="btn reject">Cancel</button>
-  </div>
-</div>
-
+<!-- REJECTION REASON MODAL -->
 <div class="modal-backdrop" id="reasonBackdrop">
   <div class="modal-box">
-    <div class="modal-header"><h3>Disapproval Reason</h3></div>
+    <div class="modal-header">
+      <h3>Disapproval Reason</h3>
+    </div>
     <div class="modal-body">
       <select id="rejectReason" style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:0.4rem;">
         <option>No infection</option>
@@ -447,7 +396,7 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
         <option>Others (specify)</option>
       </select>
 
-      <input type="text" id="rejectReasonOther" placeholder="Specify..." style="margin-top:0.6rem; width:100%; padding:0.45rem; border:1px solid var(--border); border-radius:0.4rem; display:none;">
+      <input type="text" id="rejectReasonOther" placeholder="Specify…">
 
       <button class="btn approve" id="rejectSubmit">Submit</button>
       <button class="btn reject" id="rejectCancel">Cancel</button>
@@ -455,7 +404,18 @@ header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
   </div>
 </div>
 
+<!-- CONFIRM MODAL -->
+<div class="confirm-backdrop" id="confirmBackdrop">
+  <div class="confirm-box">
+    <p id="confirmMsg"></p>
+    <button class="btn approve" id="confirmYes">Yes</button>
+    <button class="btn reject" id="confirmNo">Cancel</button>
+  </div>
+</div>
+
+<!-- EMPTY SCRIPT — JS WILL BE IN PART 2 -->
 <script>
+
 /* ==========================================================
    CONFIG
    ========================================================== */
@@ -465,20 +425,30 @@ const API =
 let ALL_DATA = [];
 let pendingAction = null;
 let tempFileId = null;
-let tempEntry = null;
 let currentRejectFileId = null;
+
+/* Simple loading indicator */
+function showLoading() {
+  document.body.style.opacity = "0.5";
+}
+function hideLoading() {
+  document.body.style.opacity = "1";
+}
 
 /* ==========================================================
    LOAD DATA
    ========================================================== */
 async function loadData() {
   try {
+    showLoading();
     const res = await fetch(API);
     const json = await res.json();
     ALL_DATA = json.entries || [];
     renderAll();
   } catch (err) {
     console.error("Fetch error:", err);
+  } finally {
+    hideLoading();
   }
 }
 
@@ -501,11 +471,13 @@ document.getElementById("confirmYes").onclick = () => {
 };
 
 /* ==========================================================
-   REJECTION REASON MODAL
+   DISAPPROVAL REASON MODAL
    ========================================================== */
 document.getElementById("rejectReason").onchange = (e) => {
-  document.getElementById("rejectReasonOther").style.display =
-    e.target.value === "Others (specify)" ? "block" : "none";
+  const show = e.target.value === "Others (specify)";
+  document.getElementById("rejectReasonOther").style.display = show
+    ? "block"
+    : "none";
 };
 
 document.getElementById("rejectCancel").onclick = () => {
@@ -537,54 +509,18 @@ document.getElementById("rejectSubmit").onclick = async () => {
 };
 
 /* ==========================================================
-   PHARMACIST MODAL
-   ========================================================== */
-function openPharmacistModal(fileId) {
-  tempFileId = fileId;
-  document.getElementById("pharmacistName").value = "";
-  document.getElementById("pharmacistBackdrop").style.display = "flex";
-}
-
-document.getElementById("pharmacistCancel").onclick = () => {
-  tempFileId = null;
-  document.getElementById("pharmacistBackdrop").style.display = "none";
-};
-
-document.getElementById("pharmacistSubmit").onclick = async () => {
-  const name = document.getElementById("pharmacistName").value.trim();
-  if (!name) {
-    alert("Pharmacist name required.");
-    return;
-  }
-
-  await fetch(API, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "markDispensed",
-      fileId: tempFileId,
-      dispensedBy: name,
-    }),
-  });
-
-  tempFileId = null;
-  document.getElementById("pharmacistBackdrop").style.display = "none";
-  loadData();
-};
-
-/* ==========================================================
-   DETAILS MODAL
+   OPEN DETAILS MODAL
    ========================================================== */
 function openDetails(entry) {
-  tempEntry = entry;
   const d = entry.data;
-  const box = document.getElementById("detailsBody");
+  const body = document.getElementById("detailsBody");
 
   const serviceResidentLabel =
     d.mode === "adult"
       ? "Internal Medicine Resident"
       : "Pediatrics Resident";
 
-  box.innerHTML = `
+  body.innerHTML = `
     <p><strong>Patient:</strong> ${d.patientName} (${d.age} y, ${d.sex})</p>
     <p><strong>Hospital #:</strong> ${d.hospitalNumber}</p>
     <p><strong>Ward:</strong> ${d.ward}</p>
@@ -604,7 +540,7 @@ function openDetails(entry) {
     <p><strong>eGFR:</strong> ${d.egfrText}</p>
     <hr>
 
-    <p><strong>Resident:</strong> ${d.residentName} (${d.clinicalDept})</p>
+    <p><strong>Resident:</strong> ${d.residentName}</p>
     <p><strong>Date:</strong> ${d.reqDate}</p>
 
     ${
@@ -622,20 +558,12 @@ function openDetails(entry) {
         : ""
     }
 
-    ${
-      d.dispensed
-        ? `<p><strong>Dispensed:</strong> Yes, by ${d.dispensedBy || "Unknown"}</p>`
-        : ""
-    }
-
     <p><strong>Status:</strong> ${d.status}</p>
-
     <hr>
   `;
 
   document.getElementById("detailsBackdrop").style.display = "flex";
 }
-
 document.getElementById("detailsClose").onclick = () => {
   document.getElementById("detailsBackdrop").style.display = "none";
 };
@@ -660,7 +588,7 @@ async function deleteEntry(fileId) {
 }
 
 /* ==========================================================
-   RENDER PENDING CARDS
+   RENDER PENDING CARDS (LIMITED FIELDS)
    ========================================================== */
 function renderPending() {
   const date = document.getElementById("pendingDate").value;
@@ -670,7 +598,6 @@ function renderPending() {
 
   const filtered = ALL_DATA.filter((e) => {
     const d = e.data;
-    if (!d) return false;
 
     if (date && d.reqDate !== date) return false;
     if (search && !String(d.hospitalNumber).includes(search)) return false;
@@ -683,30 +610,23 @@ function renderPending() {
   filtered.forEach((entry) => {
     const d = entry.data;
 
-    const serviceInfo =
+    const idsInfo =
       d.drugType === "Restricted"
-        ? `
-        <div><strong>${d.mode === "adult" ? "IM Resident" : "Pedia Resident"}:</strong> ${d.serviceResidentName}</div>
-        <div><strong>IDS:</strong> ${d.idSpecialist}</div>
-      `
+        ? `<span class="tag ids-pill">${d.idSpecialist}</span>`
         : "";
 
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
       <div class="card-header">
-        <strong>${d.patientName} (${d.age} y)</strong>
+        <strong>${d.patientName}</strong>
         <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
       </div>
 
       <div><strong>Hospital #:</strong> ${d.hospitalNumber}</div>
       <div><strong>Ward:</strong> ${d.ward}</div>
-      <div><strong>Diagnosis:</strong> ${d.diagnosis}</div>
-      <div><strong>Drug:</strong> ${d.antimicrobial}</div>
-      <div><strong>Dose:</strong> ${d.dose}</div>
-      <div><strong>Frequency:</strong> ${d.frequency}</div>
-      <div><strong>Duration:</strong> ${d.duration} days</div>
-      ${serviceInfo}
+      <div><strong>Drug:</strong> ${d.antimicrobial} — ${d.dose} (${d.frequency})</div>
+      ${idsInfo}
       <div><strong>Date:</strong> ${d.reqDate}</div>
 
       <div class="actions">
@@ -715,12 +635,12 @@ function renderPending() {
             ? `
               <button class="btn for-ids">For IDS Approval</button>
               <button class="btn reject">Disapprove</button>
-              <button class="btn delete">Delete</button>
+              <button class="btn cancel">Delete</button>
             `
             : `
               <button class="btn approve">Approve</button>
               <button class="btn reject">Disapprove</button>
-              <button class="btn delete">Delete</button>
+              <button class="btn cancel">Delete</button>
             `
         }
       </div>
@@ -752,7 +672,7 @@ function renderPending() {
       document.getElementById("reasonBackdrop").style.display = "flex";
     };
 
-    const deleteBtn = card.querySelector(".delete");
+    const deleteBtn = card.querySelector(".cancel");
     deleteBtn.onclick = (ev) => {
       ev.stopPropagation();
       confirmAction("Delete this entry?", () => deleteEntry(entry.fileId));
@@ -763,7 +683,7 @@ function renderPending() {
 }
 
 /* ==========================================================
-   GENERIC LIST RENDERER
+   RENDER GENERIC LISTS
    ========================================================== */
 function renderList(config) {
   const container = document.getElementById(config.listId);
@@ -778,14 +698,11 @@ function renderList(config) {
 
   const filtered = ALL_DATA.filter((e) => {
     const d = e.data;
-    if (!d) return false;
 
     if (config.matchStatus && d.status !== config.matchStatus) return false;
     if (config.onlyRestricted && d.drugType !== "Restricted") return false;
-    if (config.excludeRestricted && d.drugType === "Restricted") return false;
 
     if (date && d.reqDate !== date) return false;
-
     if (search && !String(d.hospitalNumber).includes(search)) return false;
     if (idsFilter && d.idSpecialist !== idsFilter) return false;
 
@@ -795,25 +712,54 @@ function renderList(config) {
   filtered.forEach((entry) => {
     const d = entry.data;
 
+    const pill =
+      d.drugType === "Restricted"
+        ? `<span class="tag restricted">Restricted</span>`
+        : `<span class="tag monitored">Monitored</span>`;
+
     const row = document.createElement("div");
     row.className = "list-item";
 
     row.innerHTML = `
       <div>
         <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
-        ${d.antimicrobial} — ${d.dose} (${d.frequency})
-        <br>
-        ${
-          d.drugType === "Restricted"
-            ? `<span class="tag restricted">Restricted</span>`
-            : `<span class="tag monitored">Monitored</span>`
-        }
+        ${d.antimicrobial} — ${d.dose} (${d.frequency})<br>
+        ${pill}
       </div>
-
       <div>${d.reqDate}</div>
     `;
 
-    row.onclick = () => openDetails(entry);
+    row.onclick = (ev) => {
+      if (ev.target.closest(".list-actions")) return;
+      openDetails(entry);
+    };
+
+    /* Add actions only where allowed */
+    if (config.listId === "approvedList") {
+      const actions = document.createElement("div");
+      actions.className = "list-actions";
+      actions.innerHTML = `
+        <button class="btn cancel">Cancel Approval</button>
+      `;
+      actions.querySelector(".cancel").onclick = (e) => {
+        e.stopPropagation();
+        updateStatus(entry.fileId, "disapproved");
+      };
+      row.appendChild(actions);
+    }
+
+    if (config.listId === "rejectedList") {
+      const actions = document.createElement("div");
+      actions.className = "list-actions";
+      actions.innerHTML = `
+        <button class="btn approve">Approve</button>
+      `;
+      actions.querySelector(".approve").onclick = (e) => {
+        e.stopPropagation();
+        updateStatus(entry.fileId, "approved");
+      };
+      row.appendChild(actions);
+    }
 
     container.appendChild(row);
   });
@@ -855,28 +801,14 @@ function renderAnalysisTiles(data) {
     .length;
 
   tiles.innerHTML = `
-    <div class="tile">
-      <div>Total Requests</div>
-      <div class="tile-number">${total}</div>
-    </div>
-    <div class="tile">
-      <div>Approved</div>
-      <div class="tile-number">${approved}</div>
-    </div>
-    <div class="tile">
-      <div>Disapproved</div>
-      <div class="tile-number">${disapproved}</div>
-    </div>
-    <div class="tile">
-      <div>Restricted</div>
-      <div class="tile-number">${restricted}</div>
-    </div>
+    <div class="tile"><div>Total Requests</div><div class="tile-number">${total}</div></div>
+    <div class="tile"><div>Approved</div><div class="tile-number">${approved}</div></div>
+    <div class="tile"><div>Disapproved</div><div class="tile-number">${disapproved}</div></div>
+    <div class="tile"><div>Restricted</div><div class="tile-number">${restricted}</div></div>
   `;
 }
 
-/* --------------------------
-   CHARTS
-   -------------------------- */
+/* CHARTS */
 let chartRequests, chartTypes, chartApproval;
 
 function renderCharts(data) {
@@ -942,9 +874,7 @@ function renderCharts(data) {
   });
 }
 
-/* --------------------------
-   TOP TABLES
-   -------------------------- */
+/* Top tables */
 function renderTopTables(data) {
   const byAbx = {};
   const byWard = {};
@@ -1041,13 +971,16 @@ document.getElementById("exportFilteredCsv").onclick = () => {
 };
 
 /* ==========================================================
-   GENERATE WARD OPTIONS
+   WARD DROPDOWN POPULATION
    ========================================================== */
 function loadWardOptions() {
-  const wards = [...new Set(ALL_DATA.map((e) => e.data.ward))].sort();
-  const select = document.getElementById("wardFilter");
+  const wards = [
+    ...new Set(ALL_DATA.map((e) => e.data.ward)),
+  ].sort();
 
+  const select = document.getElementById("wardFilter");
   select.innerHTML = '<option value="">All Wards</option>';
+
   wards.forEach((w) => {
     select.innerHTML += `<option>${w}</option>`;
   });
@@ -1108,7 +1041,19 @@ document.getElementById("applyAnalysis").onclick = applyAnalysisFilters;
 /* ==========================================================
    INIT
    ========================================================== */
-window.onload = loadData;
+window.onload = () => {
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("pendingDate").value = today;
+  document.getElementById("approvedDate").value = today;
+  document.getElementById("rejectedDate").value = today;
+  document.getElementById("idsDate").value = today;
+  document.getElementById("fromDate").value = today;
+  document.getElementById("toDate").value = today;
+
+  loadData();
+};
+
+  
 </script>
 
 </body>
