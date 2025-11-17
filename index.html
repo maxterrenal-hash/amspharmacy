@@ -964,7 +964,23 @@ function renderList(config) {
     const row = document.createElement("div");
     row.className = "list-item";
 
-    row.innerHTML = `
+let actionButtons = "";
+
+// Approved → Disapprove
+if (config.matchStatus === "approved") {
+  actionButtons = `
+    <button class="btn reject disapprove-row">Disapprove</button>
+  `;
+}
+
+// Rejected → Approve
+if (config.matchStatus === "disapproved") {
+  actionButtons = `
+    <button class="btn approve approve-row">Approve</button>
+  `;
+}
+
+row.innerHTML = `
   <div style="flex:1;">
     <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
     ${d.antimicrobial} — ${d.dose} (${d.frequency})<br>
@@ -973,6 +989,7 @@ function renderList(config) {
 
   <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem;">
     <div>${d.reqDate}</div>
+    ${actionButtons}
     <button class="btn delete delete-row">Delete</button>
   </div>
 `;
@@ -984,6 +1001,26 @@ delBtn.onclick = (ev) => {
   ev.stopPropagation();
   confirmAction("Delete this entry?", () => deleteEntry(entry.fileId));
 };
+
+  // APPROVED TAB → Disapprove → Send to Rejected
+const disBtn = row.querySelector(".disapprove-row");
+if (disBtn) {
+  disBtn.onclick = async (ev) => {
+    ev.stopPropagation();
+    await updateStatus(entry.fileId, "disapproved");
+    loadData(); // instantly refresh
+  };
+}
+
+// REJECTED TAB → Approve → Send to Approved
+const apBtn = row.querySelector(".approve-row");
+if (apBtn) {
+  apBtn.onclick = async (ev) => {
+    ev.stopPropagation();
+    await updateStatus(entry.fileId, "approved");
+    loadData();
+  };
+}
 
     container.appendChild(row);
   });
