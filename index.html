@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Ospital ng Makati – Antimicrobial Request System (Pharmacy)</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Ospital ng Makati – Antimicrobial Request System (Pharmacy)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<style>
 :root {
   --osmak-green: #009a3e;
   --osmak-green-dark: #007530;
@@ -79,6 +78,19 @@ header span {
   display: block;
 }
 
+.search-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.search-row input,
+.search-row select {
+  padding: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+}
+
 .card {
   background: var(--bg-card);
   padding: 1rem;
@@ -86,6 +98,11 @@ header span {
   border: 1px solid var(--border);
   margin-bottom: 1rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  cursor: pointer;
+}
+
+.card:hover {
+  background: #fafafa;
 }
 
 .card-header {
@@ -100,12 +117,19 @@ header span {
   font-size: 0.75rem;
   font-weight: 600;
 }
-.tag.monitored { background: rgba(0,154,62,0.15); color: var(--osmak-green-dark); }
-.tag.restricted { background: rgba(220,38,38,0.15); color: var(--osmak-red); }
+.tag.monitored { 
+  background: rgba(0,154,62,0.15); 
+  color: var(--osmak-green-dark); 
+}
+.tag.restricted { 
+  background: rgba(220,38,38,0.15); 
+  color: var(--osmak-red); 
+}
 
 .actions {
   margin-top: 0.6rem;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.4rem;
 }
 
@@ -121,18 +145,6 @@ header span {
 .btn.for-ids { background: #f59e0b; color: #fff; }
 .btn.delete { background: #6b7280; color: #fff; }
 
-.search-row {
-  display: flex;
-  gap: 0.75rem;
-  margin-bottom: 0.6rem;
-}
-.search-row input,
-.search-row select {
-  padding: 0.45rem;
-  border: 1px solid var(--border);
-  border-radius: 0.4rem;
-}
-
 .list-container {
   max-height: 500px;
   overflow-y: auto;
@@ -147,32 +159,85 @@ header span {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
+}
+.list-item:hover {
+  background: #fafafa;
 }
 .list-item:last-child {
   border-bottom: none;
 }
 
-.confirm-backdrop {
+/* DETAILS MODAL */
+.modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.45);
   display: none;
   align-items: center;
   justify-content: center;
+  z-index: 40;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 0.75rem;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.modal-header {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-body {
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+/* PHARMACIST MODAL */
+.pharm-input {
+  width: 100%;
+  padding: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+}
+
+/* CONFIRMATION MODAL */
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
 }
 
 .confirm-box {
   background: #fff;
   padding: 1rem;
-  border-radius: 0.5rem;
+  border-radius: 0.6rem;
   width: 320px;
   max-width: 90%;
 }
-.confirm-box button {
-  margin-top: 0.5rem;
-}
 
-</style>
+
 </head>
 
 <body>
@@ -193,10 +258,10 @@ header span {
     <button class="tab-btn" data-tab="approved">Approved</button>
     <button class="tab-btn" data-tab="rejected">Rejected</button>
     <button class="tab-btn" data-tab="dispensed">Dispensed</button>
-    <button class="tab-btn" data-tab="ids">IDS Pending</button>
+    <button class="tab-btn" data-tab="ids">IDS Approval</button>
   </div>
 
-  <!-- Pending Section -->
+  <!-- PENDING -->
   <div class="section active" id="pending">
     <div class="search-row">
       <input type="date" id="pendingDate">
@@ -205,7 +270,7 @@ header span {
     <div id="pendingList"></div>
   </div>
 
-  <!-- Approved Section -->
+  <!-- APPROVED -->
   <div class="section" id="approved">
     <div class="search-row">
       <input type="date" id="approvedDate">
@@ -214,7 +279,7 @@ header span {
     <div class="list-container" id="approvedList"></div>
   </div>
 
-  <!-- Rejected Section -->
+  <!-- REJECTED -->
   <div class="section" id="rejected">
     <div class="search-row">
       <input type="date" id="rejectedDate">
@@ -223,7 +288,7 @@ header span {
     <div class="list-container" id="rejectedList"></div>
   </div>
 
-  <!-- Dispensed Section -->
+  <!-- DISPENSED -->
   <div class="section" id="dispensed">
     <div class="search-row">
       <input type="date" id="dispensedDate">
@@ -232,7 +297,7 @@ header span {
     <div class="list-container" id="dispensedList"></div>
   </div>
 
-  <!-- IDS Pending -->
+  <!-- IDS APPROVAL -->
   <div class="section" id="ids">
     <div class="search-row">
       <select id="idsFilter">
@@ -249,7 +314,33 @@ header span {
 
 </div>
 
-<!-- Confirmation Modal -->
+<!-- FULL DETAILS MODAL -->
+<div class="modal-backdrop" id="detailsBackdrop">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Request Details</h3>
+      <button class="close-btn" id="detailsClose">✕</button>
+    </div>
+    <div class="modal-body" id="detailsBody"></div>
+  </div>
+</div>
+
+<!-- PHARMACIST NAME MODAL -->
+<div class="modal-backdrop" id="pharmacistBackdrop">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Dispensed By</h3>
+    </div>
+    <div class="modal-body">
+      <label>Pharmacist Name:</label>
+      <input type="text" id="pharmacistName" class="pharm-input">
+      <button class="btn approve" id="pharmacistSubmit">Submit</button>
+      <button class="btn reject" id="pharmacistCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRMATION MODAL -->
 <div class="confirm-backdrop" id="confirmBackdrop">
   <div class="confirm-box">
     <p id="confirmMsg"></p>
@@ -257,15 +348,22 @@ header span {
     <button id="confirmNo" class="btn reject">Cancel</button>
   </div>
 </div>
-
 <script>
-// === CONFIG ===
+  
+// ======================================================
+// CONFIG
+// ======================================================
 const API = "https://script.google.com/macros/s/AKfycbyFmc29khGH26fyQKgacNudxD3zA7QWN3JVB128afMnzzoY83KyH7Ddlrtg6G7hmxe8/exec";
 
 let ALL_DATA = [];
 let pendingAction = null;
+let tempFileId = null;    // for pharmacist modal
+let tempEntry = null;     // store clicked entry for modal display
 
-// Utility: fetch all entries
+
+// ======================================================
+// FETCH ALL DATA
+// ======================================================
 async function loadData() {
   const res = await fetch(API);
   const data = await res.json();
@@ -273,165 +371,145 @@ async function loadData() {
   renderAll();
 }
 
-// Utility: show confirmation modal
-function confirmAction(msg, callback) {
-  document.getElementById("confirmMsg").textContent = msg;
+
+// ======================================================
+// CONFIRMATION MODAL
+// ======================================================
+function confirmAction(message, callback) {
+  document.getElementById("confirmMsg").textContent = message;
   pendingAction = callback;
   document.getElementById("confirmBackdrop").style.display = "flex";
 }
+
 document.getElementById("confirmNo").onclick = () => {
-  document.getElementById("confirmBackdrop").style.display = "none";
   pendingAction = null;
+  document.getElementById("confirmBackdrop").style.display = "none";
 };
+
 document.getElementById("confirmYes").onclick = () => {
   if (pendingAction) pendingAction();
+  pendingAction = null;
   document.getElementById("confirmBackdrop").style.display = "none";
 };
 
 
-// === RENDERERS ===
-
-// Pending Cards
-function renderPending() {
-  const date = document.getElementById("pendingDate").value;
-  const search = document.getElementById("pendingSearch").value.trim();
-
-  const container = document.getElementById("pendingList");
-  container.innerHTML = "";
-
-  const data = ALL_DATA.filter(e => {
-    const d = e.data;
-    if (!d) return false;
-    if (date && d.reqDate !== date) return false;
-    if (search && !String(d.hospitalNumber).includes(search)) return false;
-    if (d.status === "approved" || d.status === "disapproved" || 
-        d.status === "dispensed" || d.status === "for_ids_approval") return false;
-    return true;
-  });
-
-  data.forEach(e => {
-    const d = e.data;
-    const card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-      <div class="card-header">
-        <strong>${d.patientName} (${d.age} y)</strong>
-        <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
-      </div>
-      <div><strong>Hospital #:</strong> ${d.hospitalNumber}</div>
-      <div><strong>Ward:</strong> ${d.ward}</div>
-      <div><strong>Diagnosis:</strong> ${d.diagnosis}</div>
-      <div><strong>Drug:</strong> ${d.antimicrobial} (${d.dose}, ${d.frequency}, ${d.duration}d)</div>
-      <div><strong>Indication:</strong> ${d.indication}</div>
-      <div><strong>Resident:</strong> ${d.residentName}</div>
-      <div><strong>Date:</strong> ${d.reqDate}</div>
-
-      <div class="actions">
-        ${
-          d.drugType === "Restricted"
-          ? `
-              <button class="btn for-ids">For IDS Approval</button>
-              <button class="btn delete">Delete</button>
-            `
-          : `
-              <button class="btn approve">Approved</button>
-              <button class="btn reject">Disapproved</button>
-              <button class="btn delete">Delete</button>
-            `
-        }
-        <label><input type="checkbox" class="dispCheck"> Dispensed</label>
-      </div>
-    `;
-
-    // Button actions
-    const approveBtn = card.querySelector(".approve");
-    if (approveBtn) approveBtn.onclick = () => {
-      confirmAction("Approve this request?", () => updateStatus(e.fileId, "approved"));
-    };
-
-    const rejectBtn = card.querySelector(".reject");
-    if (rejectBtn) rejectBtn.onclick = () => {
-      confirmAction("Disapprove this request?", () => updateStatus(e.fileId, "disapproved"));
-    };
-
-    const forIdsBtn = card.querySelector(".for-ids");
-    if (forIdsBtn) forIdsBtn.onclick = () => {
-      confirmAction("Send to IDS for approval?", () => updateStatus(e.fileId, "for_ids_approval"));
-    };
-
-    const deleteBtn = card.querySelector(".delete");
-    deleteBtn.onclick = () => {
-      confirmAction("Delete this entry?", () => deleteEntry(e.fileId));
-    };
-
-    const dispCheck = card.querySelector(".dispCheck");
-    dispCheck.onchange = () => {
-      confirmAction("Mark as dispensed?", () => markDispensed(e.fileId));
-    };
-
-    container.appendChild(card);
-  });
+// ======================================================
+// PHARMACIST MODAL
+// ======================================================
+function openPharmacistModal(fileId) {
+  tempFileId = fileId;
+  document.getElementById("pharmacistName").value = "";
+  document.getElementById("pharmacistBackdrop").style.display = "flex";
 }
 
+document.getElementById("pharmacistCancel").onclick = () => {
+  tempFileId = null;
+  document.getElementById("pharmacistBackdrop").style.display = "none";
+};
 
-// List Renderer for Approved / Rejected / Dispensed / IDS
-function renderList(tab, listId, filters) {
-  const date = document.getElementById(filters.dateField).value;
-  const search = document.getElementById(filters.searchField).value.trim();
-  const ids = filters.idsField ? document.getElementById(filters.idsField).value : "";
+document.getElementById("pharmacistSubmit").onclick = async () => {
+  const name = document.getElementById("pharmacistName").value.trim();
+  if (!name) {
+    alert("Pharmacist name required.");
+    return;
+  }
 
-  const container = document.getElementById(listId);
-  container.innerHTML = "";
-
-  let data = ALL_DATA.filter(e => {
-    const d = e.data;
-    if (!d) return false;
-
-    if (filters.matchStatus && d.status !== filters.matchStatus) return false;
-    if (filters.matchDrugType && d.drugType !== filters.matchDrugType) return false;
-
-    if (filters.excludeStatuses && filters.excludeStatuses.includes(d.status)) return false;
-
-    if (date && d.reqDate !== date) return false;
-    if (search && !String(d.hospitalNumber).includes(search)) return false;
-
-    if (ids && d.idSpecialist !== ids) return false;
-
-    return true;
+  await fetch(API, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "markDispensed",
+      fileId: tempFileId,
+      dispensedBy: name
+    })
   });
 
-  data.slice(0, 200).forEach(e => {
-    const d = e.data;
+  document.getElementById("pharmacistBackdrop").style.display = "none";
+  tempFileId = null;
+  loadData();
+};
 
-    const row = document.createElement("div");
-    row.className = "list-item";
-    row.innerHTML = `
-      <div>
-        <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
-        ${d.antimicrobial} – ${d.dose} (${d.frequency})
-      </div>
-      <div>${d.reqDate}</div>
-    `;
 
-    container.appendChild(row);
-  });
+// ======================================================
+// FULL DETAILS MODAL
+// ======================================================
+function openDetails(entry) {
+  tempEntry = entry;
+  const d = entry.data;
+  const box = document.getElementById("detailsBody");
+
+  const serviceResidentLabel =
+    d.mode === "adult"
+      ? "Internal Medicine Resident"
+      : "Pediatrics Resident";
+
+  box.innerHTML = `
+    <p><strong>Patient:</strong> ${d.patientName} (${d.age} y, ${d.sex})</p>
+    <p><strong>Hospital #:</strong> ${d.hospitalNumber}</p>
+    <p><strong>Ward:</strong> ${d.ward}</p>
+    <p><strong>Diagnosis:</strong> ${d.diagnosis}</p>
+    <hr>
+
+    <p><strong>Drug:</strong> ${d.antimicrobial}</p>
+    <p><strong>Dose:</strong> ${d.dose}</p>
+    <p><strong>Frequency:</strong> ${d.frequency}</p>
+    <p><strong>Duration:</strong> ${d.duration} days</p>
+    <p><strong>Drug Type:</strong> ${d.drugType}</p>
+    <p><strong>Indication:</strong> ${d.indication}</p>
+    <hr>
+
+    <p><strong>Scr:</strong> ${d.scrMgDl}</p>
+    <p><strong>SGPT:</strong> ${d.sgpt}</p>
+    <p><strong>eGFR:</strong> ${d.egfrText}</p>
+    <hr>
+
+    <p><strong>Resident:</strong> ${d.residentName} (${d.clinicalDept})</p>
+    <p><strong>Date:</strong> ${d.reqDate}</p>
+    ${d.drugType === "Restricted" ? `
+      <p><strong>${serviceResidentLabel}:</strong> ${d.serviceResidentName}</p>
+      <p><strong>IDS:</strong> ${d.idSpecialist}</p>
+    ` : ""}
+
+    ${d.dispensed ? `<p><strong>Dispensed:</strong> Yes — by ${d.dispensedBy || "Unknown"}</p>` : ""}
+    <p><strong>Status:</strong> ${d.status}</p>
+
+    <hr>
+    <p><strong>Previous Antibiotics:</strong><br>
+    ${d.previousAntibiotics?.length 
+        ? d.previousAntibiotics.map(a => `${a.drug} — ${a.frequency} — ${a.duration}`).join("<br>")
+        : "None"}
+    </p>
+
+    <hr>
+    <p><strong>Microbiology:</strong><br>
+    ${
+      d.organisms?.length
+        ? d.organisms
+            .map(
+              o => `<strong>${o.name}</strong>: ${
+                o.susceptibilities.map(s => `${s.drug} (${s.result})`).join(", ")
+              }`
+            )
+            .join("<br>")
+        : "None"
+    }
+    </p>
+  `;
+
+  document.getElementById("detailsBackdrop").style.display = "flex";
 }
 
+document.getElementById("detailsClose").onclick = () => {
+  document.getElementById("detailsBackdrop").style.display = "none";
+};
 
-// === Update actions ===
+
+// ======================================================
+// UPDATE STATUS
+// ======================================================
 async function updateStatus(fileId, status) {
   await fetch(API, {
     method: "POST",
     body: JSON.stringify({ action: "updateStatus", fileId, status })
-  });
-  loadData();
-}
-
-async function markDispensed(fileId) {
-  await fetch(API, {
-    method: "POST",
-    body: JSON.stringify({ action: "markDispensed", fileId })
   });
   loadData();
 }
@@ -445,13 +523,224 @@ async function deleteEntry(fileId) {
 }
 
 
-// === TAB SWITCHING ===
+// ======================================================
+// RENDER PENDING CARDS
+// ======================================================
+function renderPending() {
+  const date = document.getElementById("pendingDate").value;
+  const search = document.getElementById("pendingSearch").value.trim();
+  const container = document.getElementById("pendingList");
+  container.innerHTML = "";
+
+  const filtered = ALL_DATA.filter(e => {
+    const d = e.data;
+    if (!d) return false;
+    if (date && d.reqDate !== date) return false;
+    if (search && !String(d.hospitalNumber).includes(search)) return false;
+
+    // Exclude any already processed
+    return !["approved", "disapproved", "dispensed", "for_ids_approval"].includes(d.status);
+  });
+
+  filtered.forEach(entry => {
+    const d = entry.data;
+
+    const serviceInfo =
+      d.drugType === "Restricted"
+        ? `
+          <div><strong>${d.mode === "adult" ? "IM Resident" : "Pedia Resident"}:</strong> ${d.serviceResidentName}</div>
+          <div><strong>IDS:</strong> ${d.idSpecialist}</div>
+        `
+        : "";
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-header">
+        <strong>${d.patientName} (${d.age} y)</strong>
+        <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
+      </div>
+
+      <div><strong>Hospital #:</strong> ${d.hospitalNumber}</div>
+      <div><strong>Ward:</strong> ${d.ward}</div>
+      <div><strong>Diagnosis:</strong> ${d.diagnosis}</div>
+
+      <div><strong>Drug:</strong> ${d.antimicrobial}</div>
+      <div><strong>Dose:</strong> ${d.dose}</div>
+      <div><strong>Frequency:</strong> ${d.frequency}</div>
+      <div><strong>Duration:</strong> ${d.duration} days</div>
+
+      ${serviceInfo}
+
+      <div><strong>Indication:</strong> ${d.indication}</div>
+      <div><strong>Date:</strong> ${d.reqDate}</div>
+
+      <div class="actions">
+        ${
+          d.drugType === "Restricted"
+            ? `
+              <button class="btn for-ids">For IDS Approval</button>
+              <button class="btn delete">Delete</button>
+            `
+            : `
+              <button class="btn approve">Approved</button>
+              <button class="btn reject">Disapproved</button>
+              <button class="btn delete">Delete</button>
+            `
+        }
+        <label><input type="checkbox" class="dispCheck"> Dispensed</label>
+      </div>
+    `;
+
+    // Full details on click
+    card.onclick = (e) => {
+      if (
+        e.target.tagName === "BUTTON" ||
+        e.target.tagName === "INPUT" ||
+        e.target.closest("button")
+      ) return;
+      openDetails(entry);
+    };
+
+    // Actions
+    const approveBtn = card.querySelector(".approve");
+    if (approveBtn) approveBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      confirmAction("Approve this request?", () => updateStatus(entry.fileId, "approved"));
+    };
+
+    const rejectBtn = card.querySelector(".reject");
+    if (rejectBtn) rejectBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      confirmAction("Reject this request?", () => updateStatus(entry.fileId, "disapproved"));
+    };
+
+    const idsBtn = card.querySelector(".for-ids");
+    if (idsBtn) idsBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      confirmAction("Send to IDS for approval?", () => updateStatus(entry.fileId, "for_ids_approval"));
+    };
+
+    const deleteBtn = card.querySelector(".delete");
+    deleteBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      confirmAction("Delete this entry?", () => deleteEntry(entry.fileId));
+    };
+
+    // Dispensed → pharmacist modal
+    const disp = card.querySelector(".dispCheck");
+    disp.onchange = (ev) => {
+      ev.stopPropagation();
+      openPharmacistModal(entry.fileId);
+    };
+
+    container.appendChild(card);
+  });
+}
+
+
+// ======================================================
+// GENERIC LIST RENDERER (Approved, Rejected, Dispensed, IDS Approval)
+// ======================================================
+function renderList(config) {
+  const container = document.getElementById(config.listId);
+  container.innerHTML = "";
+
+  const date = document.getElementById(config.dateField).value;
+  const search = config.searchField ? document.getElementById(config.searchField).value.trim() : "";
+  const ids = config.idsField ? document.getElementById(config.idsField).value : "";
+
+  const filtered = ALL_DATA.filter(e => {
+    const d = e.data;
+    if (!d) return false;
+
+    if (config.matchStatus && d.status !== config.matchStatus) return false;
+
+    if (config.excludeRestricted && d.drugType === "Restricted") return false;
+
+    if (config.onlyRestricted && d.drugType !== "Restricted") return false;
+
+    if (date && d.reqDate !== date) return false;
+
+    if (search && !String(d.hospitalNumber).includes(search)) return false;
+
+    if (ids && d.idSpecialist !== ids) return false;
+
+    return true;
+  });
+
+  filtered.forEach(entry => {
+    const d = entry.data;
+
+    const row = document.createElement("div");
+    row.className = "list-item";
+    row.innerHTML = `
+      <div>
+        <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
+        ${d.antimicrobial} — ${d.dose} (${d.frequency})
+      </div>
+      <div>${d.reqDate}</div>
+    `;
+
+    row.onclick = () => openDetails(entry);
+
+    container.appendChild(row);
+  });
+}
+
+
+// ======================================================
+// RENDER ALL SECTIONS
+// ======================================================
+function renderAll() {
+  renderPending();
+
+  // Approved (Monitored only)
+  renderList({
+    listId: "approvedList",
+    dateField: "approvedDate",
+    searchField: "approvedSearch",
+    matchStatus: "approved",
+    excludeRestricted: true
+  });
+
+  // Rejected
+  renderList({
+    listId: "rejectedList",
+    dateField: "rejectedDate",
+    searchField: "rejectedSearch",
+    matchStatus: "disapproved"
+  });
+
+  // Dispensed (Monitored only)
+  renderList({
+    listId: "dispensedList",
+    dateField: "dispensedDate",
+    searchField: "dispensedSearch",
+    matchStatus: "dispensed",
+    excludeRestricted: true
+  });
+
+  // IDS Approval (Restricted only)
+  renderList({
+    listId: "idsList",
+    dateField: "idsDate",
+    idsField: "idsFilter",
+    matchStatus: "for_ids_approval",
+    onlyRestricted: true
+  });
+}
+
+
+// ======================================================
+// TAB SWITCHING
+// ======================================================
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    document.querySelectorAll(".section").forEach(sc => sc.classList.remove("active"));
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
     document.getElementById(btn.dataset.tab).classList.add("active");
 
     renderAll();
@@ -459,40 +748,11 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 });
 
 
-// === RENDER ALL ===
-function renderAll() {
-  renderPending();
-
-  renderList("approved", "approvedList", {
-    dateField: "approvedDate",
-    searchField: "approvedSearch",
-    matchStatus: "approved",
-    matchDrugType: "Monitored"
-  });
-
-  renderList("rejected", "rejectedList", {
-    dateField: "rejectedDate",
-    searchField: "rejectedSearch",
-    matchStatus: "disapproved"
-  });
-
-  renderList("dispensed", "dispensedList", {
-    dateField: "dispensedDate",
-    searchField: "dispensedSearch",
-    excludeStatuses: ["approved", "disapproved", "for_ids_approval"]
-  });
-
-  renderList("ids", "idsList", {
-    dateField: "idsDate",
-    searchField: "approvedSearch", // not used here
-    matchStatus: "for_ids_approval",
-    idsField: "idsFilter"
-  });
-}
-
-
+// ======================================================
 // INIT
+// ======================================================
 window.onload = loadData;
+
 </script>
 
 </body>
