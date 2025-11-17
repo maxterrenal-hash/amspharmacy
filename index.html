@@ -5,6 +5,7 @@
   <title>Ospital ng Makati – Antimicrobial Request System (Pharmacy)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <style>
 :root {
   --osmak-green: #009a3e;
   --osmak-green-dark: #007530;
@@ -236,8 +237,7 @@ header span {
   width: 320px;
   max-width: 90%;
 }
-
-
+  </style>
 </head>
 
 <body>
@@ -252,7 +252,6 @@ header span {
 
 <div class="main">
 
-  <!-- Tabs -->
   <div class="tabs">
     <button class="tab-btn active" data-tab="pending">Pending</button>
     <button class="tab-btn" data-tab="approved">Approved</button>
@@ -348,8 +347,8 @@ header span {
     <button id="confirmNo" class="btn reject">Cancel</button>
   </div>
 </div>
+
 <script>
-  
 // ======================================================
 // CONFIG
 // ======================================================
@@ -357,8 +356,8 @@ const API = "https://script.google.com/macros/s/AKfycbyFmc29khGH26fyQKgacNudxD3z
 
 let ALL_DATA = [];
 let pendingAction = null;
-let tempFileId = null;    // for pharmacist modal
-let tempEntry = null;     // store clicked entry for modal display
+let tempFileId = null;    
+let tempEntry = null;
 
 
 // ======================================================
@@ -538,7 +537,6 @@ function renderPending() {
     if (date && d.reqDate !== date) return false;
     if (search && !String(d.hospitalNumber).includes(search)) return false;
 
-    // Exclude any already processed
     return !["approved", "disapproved", "dispensed", "for_ids_approval"].includes(d.status);
   });
 
@@ -592,7 +590,6 @@ function renderPending() {
       </div>
     `;
 
-    // Full details on click
     card.onclick = (e) => {
       if (
         e.target.tagName === "BUTTON" ||
@@ -602,7 +599,6 @@ function renderPending() {
       openDetails(entry);
     };
 
-    // Actions
     const approveBtn = card.querySelector(".approve");
     if (approveBtn) approveBtn.onclick = (ev) => {
       ev.stopPropagation();
@@ -627,7 +623,6 @@ function renderPending() {
       confirmAction("Delete this entry?", () => deleteEntry(entry.fileId));
     };
 
-    // Dispensed → pharmacist modal
     const disp = card.querySelector(".dispCheck");
     disp.onchange = (ev) => {
       ev.stopPropagation();
@@ -640,7 +635,7 @@ function renderPending() {
 
 
 // ======================================================
-// GENERIC LIST RENDERER (Approved, Rejected, Dispensed, IDS Approval)
+// GENERIC LIST RENDERER
 // ======================================================
 function renderList(config) {
   const container = document.getElementById(config.listId);
@@ -695,7 +690,6 @@ function renderList(config) {
 function renderAll() {
   renderPending();
 
-  // Approved (Monitored only)
   renderList({
     listId: "approvedList",
     dateField: "approvedDate",
@@ -704,7 +698,6 @@ function renderAll() {
     excludeRestricted: true
   });
 
-  // Rejected
   renderList({
     listId: "rejectedList",
     dateField: "rejectedDate",
@@ -712,7 +705,6 @@ function renderAll() {
     matchStatus: "disapproved"
   });
 
-  // Dispensed (Monitored only)
   renderList({
     listId: "dispensedList",
     dateField: "dispensedDate",
@@ -721,7 +713,6 @@ function renderAll() {
     excludeRestricted: true
   });
 
-  // IDS Approval (Restricted only)
   renderList({
     listId: "idsList",
     dateField: "idsDate",
@@ -752,7 +743,6 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 // INIT
 // ======================================================
 window.onload = loadData;
-
 </script>
 
 </body>
