@@ -5,26 +5,19 @@
   <title>Ospital ng Makati – Antimicrobial Request System (Pharmacy)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-/* =========================================================
-   THEME
-========================================================= */
+<style>
 :root {
   --osmak-green: #009a3e;
   --osmak-green-dark: #007530;
   --osmak-red: #dc2626;
+  --osmak-amber: #f59e0b;
   --bg-main: #f5f5f5;
   --bg-card: #ffffff;
   --text-main: #111827;
   --text-muted: #6b7280;
   --border: #d1d5db;
-  --pill-red-bg: rgba(220,38,38,0.15);
-  --pill-green-bg: rgba(0,154,62,0.15);
 }
 
-/* =========================================================
-   BASE
-========================================================= */
 body {
   margin: 0;
   font-family: system-ui, -apple-system, sans-serif;
@@ -32,9 +25,6 @@ body {
   color: var(--text-main);
 }
 
-/* =========================================================
-   HEADER
-========================================================= */
 header {
   display: flex;
   align-items: center;
@@ -44,32 +34,16 @@ header {
   padding: 0.75rem 1rem;
 }
 
-header img {
-  height: 48px;
-}
+header img { height: 48px; }
+header h1 { margin: 0; font-size: 1.2rem; text-transform: uppercase; }
+header span { font-size: 0.85rem; opacity: 0.9; }
 
-header h1 {
-  margin: 0;
-  font-size: 1.2rem;
-  text-transform: uppercase;
-}
-header span {
-  font-size: 0.85rem;
-  opacity: 0.9;
-}
-
-/* =========================================================
-   MAIN WRAPPER
-========================================================= */
 .main {
   max-width: 1200px;
-  margin: 1rem auto 3rem;
+  margin: 1rem auto;
   padding: 0 1rem;
 }
 
-/* =========================================================
-   TABS
-========================================================= */
 .tabs {
   display: flex;
   gap: 0.5rem;
@@ -79,11 +53,9 @@ header span {
 .tab-btn {
   background: #fff;
   border: 1px solid var(--border);
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 0.4rem;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 0.9rem;
 }
 .tab-btn.active {
   background: var(--osmak-green);
@@ -91,52 +63,36 @@ header span {
   border-color: var(--osmak-green-dark);
 }
 
-/* =========================================================
-   SECTIONS
-========================================================= */
-.section {
-  display: none;
-}
-.section.active {
-  display: block;
-}
+.section { display: none; }
+.section.active { display: block; }
 
-/* =========================================================
-   FILTER ROWS
-========================================================= */
 .search-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   margin-bottom: 0.6rem;
 }
 
 .search-row input,
-.search-row select {
+.search-row select,
+.search-row button {
   padding: 0.45rem;
   border: 1px solid var(--border);
   border-radius: 0.4rem;
-  font-size: 0.9rem;
 }
 
-/* =========================================================
-   CARD STYLE (PENDING)
-========================================================= */
 .card {
   background: var(--bg-card);
-  padding: 1rem 1.2rem;
+  padding: 0.85rem;
   border-radius: 0.75rem;
   border: 1px solid var(--border);
   margin-bottom: 1rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   cursor: pointer;
-  transition: background 0.2s;
 }
 
-.card:hover {
-  background: #fafafa;
-}
+.card:hover { background: #fafafa; }
 
-/* Header row */
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -144,53 +100,49 @@ header span {
   font-size: 1rem;
 }
 
-/* Drug type pill */
 .tag {
-  padding: 0.15rem 0.6rem;
+  padding: 0.15rem 0.55rem;
   border-radius: 999px;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 .tag.monitored {
-  background: var(--pill-green-bg);
+  background: rgba(0,154,62,0.15);
   color: var(--osmak-green-dark);
 }
 .tag.restricted {
-  background: var(--pill-red-bg);
+  background: rgba(220,38,38,0.15);
   color: var(--osmak-red);
 }
-
-/* =========================================================
-   BUTTONS (Option A — Solid Buttons)
-========================================================= */
-.btn {
-  border: none;
-  padding: 0.45rem 0.9rem;
-  font-size: 0.78rem;
-  border-radius: 0.4rem;
-  cursor: pointer;
-  font-weight: 600;
+.tag.idsPill {
+  background: rgba(245,158,11,0.2);
+  border: 1px solid var(--osmak-amber);
+  color: #b45309;
 }
 
-.btn.approve { background: var(--osmak-green); color: white; }
-.btn.reject { background: var(--osmak-red); color: white; }
-.btn.for-ids { background: #f59e0b; color: #fff; }
-.btn.delete { background: #6b7280; color: #fff; }
-.btn.cancel { background: #374151; color: #fff; }
-
-/* Action container */
 .actions {
-  margin-top: 0.7rem;
+  margin-top: 0.6rem;
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
 }
 
-/* =========================================================
-   LIST VIEW (Approved / Rejected / Dispensed / IDS)
-========================================================= */
+.btn {
+  border: none;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+.btn.approve { background: var(--osmak-green); color: #fff; }
+.btn.reject { background: var(--osmak-red); color: #fff; }
+.btn.ids { background: var(--osmak-amber); color: #fff; }
+.btn.delete { background: #6b7280; color: #fff; }
+.btn.csv { background: #3b82f6; color: #fff; }
+.btn.csv-all { background: #4b5563; color: #fff; }
+
 .list-container {
-  max-height: 500px;
+  max-height: 530px;
   overflow-y: auto;
   border: 1px solid var(--border);
   border-radius: 0.5rem;
@@ -198,27 +150,64 @@ header span {
 }
 
 .list-item {
-  padding: 0.8rem 1rem;
+  padding: 0.6rem;
   border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
 }
-.list-item:hover {
-  background: #f1f5f9;
+.list-item:last-child { border-bottom: none; }
+.list-item:hover { background: #fafafa; }
+
+/* DETAILS MODAL */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
 }
-.list-item:last-child {
-  border-bottom: none;
+.modal-box {
+  background: #fff;
+  border-radius: 0.75rem;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+.modal-header {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-body {
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4rem;
+}
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
 }
 
-/* =========================================================
-   MODALS
-========================================================= */
-.modal-backdrop,
-.confirm-backdrop,
-.pharmacist-backdrop,
-.reason-backdrop {
+/* PHARMACIST MODAL */
+.pharm-input {
+  width: 100%;
+  padding: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+}
+
+/* CONFIRMATION MODAL */
+.confirm-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.45);
@@ -227,55 +216,69 @@ header span {
   justify-content: center;
   z-index: 50;
 }
-
-.modal-box {
+.confirm-box {
   background: #fff;
+  padding: 1rem;
+  border-radius: 0.6rem;
+  width: 320px;
+}
+
+/* REASON MODAL */
+#reasonBackdrop { display:none; }
+
+/* ANALYTICS GRID */
+.analysis-grid {
+  display: grid;
+  gap: 1rem;
+}
+@media (min-width: 900px) {
+  .analysis-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* SUMMARY TILES */
+.tile {
+  background: #fff;
+  padding: 1rem;
   border-radius: 0.75rem;
-  width: 92%;
-  max-width: 750px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-}
-
-.modal-header {
-  padding: 0.9rem 1.2rem;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-body {
-  padding: 1rem 1.2rem;
-  font-size: 0.9rem;
-  line-height: 1.45rem;
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.3rem;
-  cursor: pointer;
-}
-
-/* Pharmacist input */
-.pharm-input,
-.reason-input {
-  width: 100%;
-  padding: 0.55rem;
   border: 1px solid var(--border);
-  border-radius: 0.4rem;
-  margin-bottom: 0.7rem;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
-  </style>
+.tile strong {
+  font-size: 1.4rem;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* TABLE */
+.table-box {
+  overflow-x: auto;
+  background: #fff;
+  border-radius: .5rem;
+  border: 1px solid var(--border);
+  padding: .5rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+td, th {
+  border: 1px solid var(--border);
+  padding: 0.4rem;
+}
+th {
+  background: #e5e7eb;
+  font-weight: 600;
+}
+
+</style>
 </head>
 
 <body>
 
-<!-- =========================================================
-     HEADER
-========================================================= -->
 <header>
   <img src="https://maxterrenal-hash.github.io/justculture/osmak-logo.png">
   <div>
@@ -286,79 +289,78 @@ header span {
 
 <div class="main">
 
-  <!-- =========================================================
-       TABS
-  ========================================================= -->
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="pending">Pending</button>
-    <button class="tab-btn" data-tab="approved">Approved</button>
-    <button class="tab-btn" data-tab="rejected">Rejected</button>
-    <button class="tab-btn" data-tab="dispensed">Dispensed</button>
-    <button class="tab-btn" data-tab="ids">IDS Approval</button>
-  </div>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="pending">Pending</button>
+  <button class="tab-btn" data-tab="approved">Approved</button>
+  <button class="tab-btn" data-tab="rejected">Rejected</button>
+  <button class="tab-btn" data-tab="ids">IDS Approval</button>
+  <button class="tab-btn" data-tab="analysis">Data Analysis</button>
+</div>
 
-  <!-- =========================================================
-       PENDING (NO FILTERS)
-  ========================================================= -->
-  <div class="section active" id="pending">
-    <div id="pendingList"></div>
-  </div>
+<!-- -------------------- PENDING -------------------- -->
+<div class="section active" id="pending">
+  <div id="pendingList"></div>
+</div>
 
-  <!-- =========================================================
-       APPROVED
-  ========================================================= -->
-  <div class="section" id="approved">
-    <div class="search-row">
-      <input type="date" id="approvedDate">
-      <input type="text" id="approvedSearch" placeholder="Search Hospital Number">
-    </div>
-    <div class="list-container" id="approvedList"></div>
+<!-- -------------------- APPROVED -------------------- -->
+<div class="section" id="approved">
+  <div class="search-row">
+    <input type="date" id="approvedDate">
+    <input type="text" id="approvedSearch" placeholder="Search Hospital Number">
   </div>
+  <div class="list-container" id="approvedList"></div>
+</div>
 
-  <!-- =========================================================
-       REJECTED
-  ========================================================= -->
-  <div class="section" id="rejected">
-    <div class="search-row">
-      <input type="date" id="rejectedDate">
-      <input type="text" id="rejectedSearch" placeholder="Search Hospital Number">
-    </div>
-    <div class="list-container" id="rejectedList"></div>
+<!-- -------------------- REJECTED -------------------- -->
+<div class="section" id="rejected">
+  <div class="search-row">
+    <input type="date" id="rejectedDate">
+    <input type="text" id="rejectedSearch" placeholder="Search Hospital Number">
   </div>
+  <div class="list-container" id="rejectedList"></div>
+</div>
 
-  <!-- =========================================================
-       DISPENSED
-  ========================================================= -->
-  <div class="section" id="dispensed">
-    <div class="search-row">
-      <input type="date" id="dispensedDate">
-      <input type="text" id="dispensedSearch" placeholder="Search Hospital Number">
-    </div>
-    <div class="list-container" id="dispensedList"></div>
+<!-- -------------------- IDS APPROVAL -------------------- -->
+<div class="section" id="ids">
+  <div class="search-row">
+    <select id="idsFilter">
+      <option value="">Filter by IDS</option>
+      <option>Dr. Christopher John Tibayan</option>
+      <option>Dr. Paulo Garcia</option>
+      <option>Dr. Jelly Ann Gozun-Recuenco</option>
+      <option>Dr. Michelle Carandang-Cuvin</option>
+    </select>
+    <input type="date" id="idsDate">
   </div>
+  <div class="list-container" id="idsList"></div>
+</div>
 
-  <!-- =========================================================
-       IDS APPROVAL
-  ========================================================= -->
-  <div class="section" id="ids">
-    <div class="search-row">
-      <select id="idsFilter">
-        <option value="">Filter by IDS</option>
-        <option>Dr. Christopher John Tibayan</option>
-        <option>Dr. Paulo Garcia</option>
-        <option>Dr. Jelly Ann Gozun-Recuenco</option>
-        <option>Dr. Michelle Carandang-Cuvin</option>
+<!-- -------------------- DATA ANALYSIS -------------------- -->
+<div class="section" id="analysis">
+
+  <div class="search-row">
+    <label>From: <input type="date" id="anFrom"></label>
+    <label>To: <input type="date" id="anTo"></label>
+    <label>Ward:
+      <select id="anWard">
+        <option value="">All Wards</option>
       </select>
-      <input type="date" id="idsDate">
-    </div>
-    <div class="list-container" id="idsList"></div>
+    </label>
+    <button class="btn approve" id="applyAnalysis">Apply Filters</button>
   </div>
+
+  <div class="search-row" style="justify-content:flex-end;">
+    <button class="btn csv" id="exportFiltered">Export Filtered CSV</button>
+    <button class="btn csv-all" id="exportAll">Export All CSV</button>
+  </div>
+
+  <div id="analysisContent"></div>
 
 </div>
 
-<!-- =========================================================
-     FULL DETAILS MODAL
-========================================================= -->
+</div>
+
+<!-- --------------- DETAILS MODAL --------------- -->
 <div class="modal-backdrop" id="detailsBackdrop">
   <div class="modal-box">
     <div class="modal-header">
@@ -369,33 +371,38 @@ header span {
   </div>
 </div>
 
-<!-- =========================================================
-     PHARMACIST NAME MODAL
-========================================================= -->
-<div class="modal-backdrop pharmacist-backdrop" id="pharmacistBackdrop">
+<!-- --------------- PHARMACIST MODAL --------------- -->
+<div class="modal-backdrop" id="pharmacistBackdrop">
   <div class="modal-box">
-    <div class="modal-header">
-      <h3>Dispensed By</h3>
-    </div>
+    <div class="modal-header"><h3>Dispensed By</h3></div>
     <div class="modal-body">
-      <input type="text" id="pharmacistName" class="pharm-input" placeholder="Enter pharmacist name">
+      <label>Pharmacist Name:</label>
+      <input type="text" id="pharmacistName" class="pharm-input">
       <button class="btn approve" id="pharmacistSubmit">Submit</button>
-      <button class="btn delete" id="pharmacistCancel">Cancel</button>
+      <button class="btn reject" id="pharmacistCancel">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- =========================================================
-     REJECT REASON MODAL
-========================================================= -->
-<div class="modal-backdrop reason-backdrop" id="reasonBackdrop">
+<!-- --------------- CONFIRM MODAL --------------- -->
+<div class="confirm-backdrop" id="confirmBackdrop">
+  <div class="confirm-box">
+    <p id="confirmMsg"></p>
+    <button id="confirmYes" class="btn approve">Yes</button>
+    <button id="confirmNo" class="btn reject">Cancel</button>
+  </div>
+</div>
+
+<!-- --------------- REASON MODAL --------------- -->
+<div class="modal-backdrop" id="reasonBackdrop">
   <div class="modal-box">
     <div class="modal-header">
-      <h3>Reason for Disapproval</h3>
+      <h3>Disapproval Reason</h3>
+      <button class="close-btn" id="reasonClose">✕</button>
     </div>
     <div class="modal-body">
-      <select id="reasonSelect" class="reason-input">
-        <option value="">Select reason</option>
+      <label>Reason:</label>
+      <select id="reasonSelect" class="pharm-input">
         <option>No infection</option>
         <option>Wrong choice</option>
         <option>Wrong dose</option>
@@ -403,185 +410,207 @@ header span {
         <option>Wrong duration</option>
         <option>Others</option>
       </select>
+      <textarea id="reasonOther" class="pharm-input" placeholder="Specify reason..." style="margin-top:0.5rem; display:none;"></textarea>
 
-      <textarea id="reasonOther" class="reason-input" placeholder="Specify if Others..." style="display:none;"></textarea>
-
-      <button class="btn reject" id="reasonSubmit">Submit</button>
-      <button class="btn delete" id="reasonCancel">Cancel</button>
+      <button class="btn reject" id="reasonSubmit" style="margin-top:0.75rem;">Submit Reason</button>
     </div>
   </div>
 </div>
 
-<script>
-/* =========================================================
+  <script>
+/* ======================================================
    CONFIG
-========================================================= */
+====================================================== */
 const API = "https://script.google.com/macros/s/AKfycbxqCMutMeG7CyDK68P8mkbxkkV-2o0S6XxoBYsPo6lG7jcAVppP8zPV6zuX6AJtfywh/exec";
 
 let ALL_DATA = [];
-let rejectFileId = null;
+let CURRENT_ANALYSIS_DATA = [];
+let pendingAction = null;
+let tempFileId = null;
+let tempEntry = null;
+let rejectTargetFileId = null;
 
-/* =========================================================
-   AUTO-REFRESH (Event-driven push simulation)
-========================================================= */
-setInterval(() => loadData(false), 2000);
+/* ======================================================
+   AUTO REFRESH (PUSH SIMULATION)
+====================================================== */
+let lastStamp = 0;
+setInterval(checkStamp, 2000);
 
-/* =========================================================
-   FETCH ALL DATA
-========================================================= */
-async function loadData(showLoading = true) {
+async function checkStamp() {
   try {
-    const res = await fetch(API);
-    const data = await res.json();
-    ALL_DATA = data.entries || [];
-    renderAll();
+    const res = await fetch(API + "?action=indexStamp");
+    const obj = await res.json();
+    if (obj.lastUpdate > lastStamp) {
+      lastStamp = obj.lastUpdate;
+      loadData();
+    }
   } catch (err) {
-    console.error("Fetch error:", err);
+    console.log("Stamp check failed", err);
   }
 }
 
-/* =========================================================
-   OPEN DETAILS MODAL
-========================================================= */
-function openDetails(entry) {
-  const d = entry.data;
-  const body = document.getElementById("detailsBody");
-
-  const sr = d.mode === "adult" ? "Internal Medicine Resident" : "Pediatrics Resident";
-
-  body.innerHTML = `
-    <p><strong>Patient:</strong> ${d.patientName} (${d.age} y, ${d.sex})</p>
-    <p><strong>Hospital #:</strong> ${d.hospitalNumber}</p>
-    <p><strong>Ward:</strong> ${d.ward}</p>
-    <p><strong>Diagnosis:</strong> ${d.diagnosis}</p>
-    <hr>
-
-    <p><strong>Drug:</strong> ${d.antimicrobial}</p>
-    <p><strong>Dose:</strong> ${d.dose}</p>
-    <p><strong>Frequency:</strong> ${d.frequency}</p>
-    <p><strong>Duration:</strong> ${d.duration} days</p>
-    <p><strong>Type:</strong> <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span></p>
-    <p><strong>Indication:</strong> ${d.indication}</p>
-    <hr>
-
-    <p><strong>Scr:</strong> ${d.scrMgDl}</p>
-    <p><strong>SGPT:</strong> ${d.sgpt}</p>
-    <p><strong>eGFR:</strong> ${d.egfrText}</p>
-    <hr>
-
-    <p><strong>Resident:</strong> ${d.residentName} (${d.clinicalDept})</p>
-    <p><strong>Date:</strong> ${d.reqDate}</p>
-
-    ${
-      d.drugType === "Restricted"
-        ? `
-          <p><strong>${sr}:</strong> ${d.serviceResidentName}</p>
-          <p><strong>IDS:</strong> ${d.idSpecialist}</p>
-        `
-        : ""
-    }
-
-    ${
-      d.dispensed
-        ? `<p><strong>Dispensed by:</strong> ${d.dispensedBy || "Unknown"}</p>`
-        : ""
-    }
-
-    <p><strong>Status:</strong> ${d.status}</p>
-
-    ${
-      d.rejectReason
-        ? `<p><strong>Reject Reason:</strong> ${d.rejectReason}</p>`
-        : ""
-    }
-  `;
-
-  document.getElementById("detailsBackdrop").style.display = "flex";
+/* ======================================================
+   LOAD ALL ENTRIES
+====================================================== */
+async function loadData() {
+  const res = await fetch(API);
+  const data = await res.json();
+  ALL_DATA = data.entries || [];
+  renderAll();
+  populateWardFilter();
 }
 
-document.getElementById("detailsClose").onclick = () =>
-  (document.getElementById("detailsBackdrop").style.display = "none");
+/* ======================================================
+   CONFIRMATION MODAL
+====================================================== */
+function confirmAction(message, callback) {
+  document.getElementById("confirmMsg").textContent = message;
+  pendingAction = callback;
+  document.getElementById("confirmBackdrop").style.display = "flex";
+}
 
-/* =========================================================
-   REJECT REASON MODAL
-========================================================= */
-document.getElementById("reasonSelect").onchange = () => {
-  const sel = document.getElementById("reasonSelect").value;
-  document.getElementById("reasonOther").style.display =
-    sel === "Others" ? "block" : "none";
+document.getElementById("confirmNo").onclick = () => {
+  pendingAction = null;
+  document.getElementById("confirmBackdrop").style.display = "none";
 };
 
-document.getElementById("reasonCancel").onclick = () => {
-  rejectFileId = null;
-  document.getElementById("reasonBackdrop").style.display = "none";
+document.getElementById("confirmYes").onclick = () => {
+  if (pendingAction) pendingAction();
+  pendingAction = null;
+  document.getElementById("confirmBackdrop").style.display = "none";
+};
+
+/* ======================================================
+   PHARMACIST MODAL
+====================================================== */
+function openPharmacistModal(fileId) {
+  tempFileId = fileId;
+  document.getElementById("pharmacistName").value = "";
+  document.getElementById("pharmacistBackdrop").style.display = "flex";
+}
+
+document.getElementById("pharmacistCancel").onclick = () => {
+  tempFileId = null;
+  document.getElementById("pharmacistBackdrop").style.display = "none";
+};
+
+document.getElementById("pharmacistSubmit").onclick = async () => {
+  const name = document.getElementById("pharmacistName").value.trim();
+  if (!name) {
+    alert("Pharmacist name required.");
+    return;
+  }
+
+  await fetch(API, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "markDispensed",
+      fileId: tempFileId,
+      dispensedBy: name
+    })
+  });
+
+  document.getElementById("pharmacistBackdrop").style.display = "none";
+  tempFileId = null;
+  loadData();
+};
+
+/* ======================================================
+   DISAPPROVAL REASON MODAL
+====================================================== */
+const reasonBackdrop = document.getElementById("reasonBackdrop");
+const reasonSelect = document.getElementById("reasonSelect");
+const reasonOther = document.getElementById("reasonOther");
+
+reasonSelect.onchange = () => {
+  if (reasonSelect.value === "Others") {
+    reasonOther.style.display = "block";
+  } else {
+    reasonOther.style.display = "none";
+  }
+};
+
+document.getElementById("reasonClose").onclick = () => {
+  reasonBackdrop.style.display = "none";
 };
 
 document.getElementById("reasonSubmit").onclick = async () => {
-  if (!rejectFileId) return;
-
-  let reason = document.getElementById("reasonSelect").value;
-  if (!reason) return alert("Select a reason");
-
+  let reason = reasonSelect.value;
   if (reason === "Others") {
-    const txt = document.getElementById("reasonOther").value.trim();
-    if (!txt) return alert("Specify reason");
-    reason = txt;
+    reason = reasonOther.value.trim() || "No reason provided";
   }
 
   await fetch(API, {
     method: "POST",
     body: JSON.stringify({
       action: "updateStatus",
-      fileId: rejectFileId,
+      fileId: rejectTargetFileId,
       status: "disapproved",
-      rejectReason: reason
+      reason: reason
     })
   });
 
-  rejectFileId = null;
-  document.getElementById("reasonBackdrop").style.display = "none";
+  reasonBackdrop.style.display = "none";
   loadData();
 };
 
-/* =========================================================
-   PHARMACIST MODAL
-========================================================= */
-let dispenseFileId = null;
+/* ======================================================
+   DETAILS MODAL
+====================================================== */
+function openDetails(entry) {
+  tempEntry = entry;
+  const d = entry.data;
+  const body = document.getElementById("detailsBody");
 
-function openPharmacistModal(id) {
-  dispenseFileId = id;
-  document.getElementById("pharmacistBackdrop").style.display = "flex";
+  const serviceLabel = d.mode === "adult"
+    ? "Internal Medicine Resident"
+    : "Pediatrics Resident";
+
+  body.innerHTML = `
+    <p><strong>Patient:</strong> ${d.patientName} (${d.age} y / ${d.sex})</p>
+    <p><strong>Hospital #:</strong> ${d.hospitalNumber}</p>
+    <p><strong>Ward:</strong> ${d.ward}</p>
+    <p><strong>Diagnosis:</strong> ${d.diagnosis}</p>
+    <hr>
+    <p><strong>Drug:</strong> ${d.antimicrobial}</p>
+    <p><strong>Dose:</strong> ${d.dose}</p>
+    <p><strong>Frequency:</strong> ${d.frequency}</p>
+    <p><strong>Duration:</strong> ${d.duration} days</p>
+    <p><strong>Type:</strong> ${d.drugType}</p>
+    <p><strong>Indication:</strong> ${d.indication}</p>
+    <hr>
+    <p><strong>Scr:</strong> ${d.scrMgDl}</p>
+    <p><strong>SGPT:</strong> ${d.sgpt}</p>
+    <p><strong>eGFR:</strong> ${d.egfrText}</p>
+    <hr>
+    <p><strong>Resident:</strong> ${d.residentName} (${d.clinicalDept})</p>
+    <p><strong>Date:</strong> ${d.reqDate}</p>
+
+    ${d.drugType === "Restricted" ? `
+      <p><strong>${serviceLabel}:</strong> ${d.serviceResidentName}</p>
+      <p><strong>IDS Specialist:</strong> ${d.idSpecialist}</p>
+    ` : ""}
+
+    ${d.reason ? `<p><strong>Reject Reason:</strong> ${d.reason}</p>` : ""}
+
+    ${d.dispensed ? `<p><strong>Dispensed:</strong> Yes — by ${d.dispensedBy}</p>` : ""}
+    <p><strong>Status:</strong> ${d.status}</p>
+  `;
+
+  document.getElementById("detailsBackdrop").style.display = "flex";
 }
 
-document.getElementById("pharmacistCancel").onclick = () => {
-  dispenseFileId = null;
-  document.getElementById("pharmacistBackdrop").style.display = "none";
+document.getElementById("detailsClose").onclick = () => {
+  document.getElementById("detailsBackdrop").style.display = "none";
 };
 
-document.getElementById("pharmacistSubmit").onclick = async () => {
-  const name = document.getElementById("pharmacistName").value.trim();
-  if (!name) return alert("Enter pharmacist name");
-
+/* ======================================================
+   BACKEND ACTIONS
+====================================================== */
+async function updateStatus(fileId, status, reason=null) {
   await fetch(API, {
     method: "POST",
-    body: JSON.stringify({
-      action: "markDispensed",
-      fileId: dispenseFileId,
-      dispensedBy: name
-    })
-  });
-
-  document.getElementById("pharmacistBackdrop").style.display = "none";
-  loadData();
-};
-
-/* =========================================================
-   GENERIC SERVER ACTIONS
-========================================================= */
-async function updateStatus(fileId, status, reason = null) {
-  await fetch(API, {
-    method: "POST",
-    body: JSON.stringify({ action: "updateStatus", fileId, status, rejectReason: reason })
+    body: JSON.stringify({ action: "updateStatus", fileId, status, reason })
   });
   loadData();
 }
@@ -594,109 +623,105 @@ async function deleteEntry(fileId) {
   loadData();
 }
 
-/* =========================================================
-   RENDER PENDING (LAYOUT C)
-========================================================= */
+/* ======================================================
+   PENDING (LAYOUT C)
+====================================================== */
 function renderPending() {
-  const parent = document.getElementById("pendingList");
-  parent.innerHTML = "";
+  const container = document.getElementById("pendingList");
+  container.innerHTML = "";
 
-  const list = ALL_DATA.filter(e => {
+  const pending = ALL_DATA.filter(e => {
     const s = e.data.status;
-    return !["approved", "disapproved", "dispensed", "for_ids_approval"].includes(s);
+    return !["approved","disapproved","for_ids_approval","dispensed"].includes(s);
   });
 
-  list.forEach(entry => {
-    const d = entry.data;
-
-    const pillClass = d.drugType === "Restricted" ? "restricted" : "monitored";
+  pending.forEach(e => {
+    const d = e.data;
 
     const card = document.createElement("div");
     card.className = "card";
+
     card.innerHTML = `
       <div class="card-header">
         <strong>${d.patientName} — ${d.ward}</strong>
-        <span class="tag ${pillClass}">${d.drugType}</span>
+        <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
       </div>
 
       <div><strong>${d.antimicrobial}</strong></div>
-      <div class="text-muted">${d.reqDate}</div>
+      <div style="font-size:0.85rem; color:var(--text-muted);">${d.reqDate}</div>
 
       <div class="actions">
         ${
           d.drugType === "Restricted"
-            ? `
-              <button class="btn for-ids">Dispense</button>
-              <button class="btn reject">Disapprove</button>
-              <button class="btn delete">Delete</button>
-            `
-            : `
-              <button class="btn approve">Approve</button>
-              <button class="btn reject">Disapprove</button>
-              <button class="btn delete">Delete</button>
-            `
+          ? `
+            <button class="btn ids">Dispense</button>
+            <button class="btn reject">Disapprove</button>
+            <button class="btn delete">Delete</button>
+          `
+          : `
+            <button class="btn approve">Approve</button>
+            <button class="btn reject">Disapprove</button>
+            <button class="btn delete">Delete</button>
+          `
         }
       </div>
     `;
 
-    /* Clicking background = open details */
-    card.onclick = (ev) => {
-      if (ev.target.tagName === "BUTTON") return;
-      openDetails(entry);
+    card.onclick = (evt) => {
+      if (evt.target.tagName === "BUTTON") return;
+      openDetails(e);
     };
 
-    /* Approve (Monitored only) */
-    if (card.querySelector(".approve")) {
-      card.querySelector(".approve").onclick = (ev) => {
-        ev.stopPropagation();
-        updateStatus(entry.fileId, "approved");
-      };
-    }
-
-    /* Dispense (Restricted only) */
-    if (card.querySelector(".for-ids")) {
-      card.querySelector(".for-ids").onclick = (ev) => {
-        ev.stopPropagation();
-        openPharmacistModal(entry.fileId);
-      };
-    }
-
-    /* Disapprove w/ reason */
-    card.querySelector(".reject").onclick = (ev) => {
+    const approveBtn = card.querySelector(".approve");
+    if (approveBtn) approveBtn.onclick = (ev) => {
       ev.stopPropagation();
-      rejectFileId = entry.fileId;
-      document.getElementById("reasonBackdrop").style.display = "flex";
+      confirmAction("Approve this request?", () =>
+        updateStatus(e.fileId,"approved")
+      );
     };
 
-    /* Delete */
-    card.querySelector(".delete").onclick = (ev) => {
+    const rejectBtn = card.querySelector(".reject");
+    rejectBtn.onclick = (ev) => {
       ev.stopPropagation();
-      deleteEntry(entry.fileId);
+      rejectTargetFileId = e.fileId;
+      reasonBackdrop.style.display = "flex";
     };
 
-    parent.appendChild(card);
+    const idsBtn = card.querySelector(".ids");
+    if (idsBtn) idsBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      openPharmacistModal(e.fileId);
+    };
+
+    const delBtn = card.querySelector(".delete");
+    delBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      confirmAction("Delete this entry?", () => deleteEntry(e.fileId));
+    };
+
+    container.appendChild(card);
   });
 }
 
-/* =========================================================
-   GENERIC LIST RENDERER
-========================================================= */
-function renderList({ listId, dateId, searchId, idsId, status, restrictedOnly, excludeRestricted }) {
-  const parent = document.getElementById(listId);
-  parent.innerHTML = "";
+/* ======================================================
+   LIST RENDERING (APPROVED / REJECTED / IDS)
+====================================================== */
+function renderList(config) {
+  const container = document.getElementById(config.listId);
+  container.innerHTML = "";
 
-  const date = document.getElementById(dateId)?.value;
-  const search = searchId ? document.getElementById(searchId).value.trim() : "";
-  const ids = idsId ? document.getElementById(idsId).value : "";
+  const date = document.getElementById(config.dateField)?.value;
+  const search = config.searchField
+    ? document.getElementById(config.searchField).value.trim()
+    : "";
+  const ids = config.idsField
+    ? document.getElementById(config.idsField).value
+    : "";
 
-  const list = ALL_DATA.filter(e => {
+  const filtered = ALL_DATA.filter(e => {
     const d = e.data;
-    if (!d) return false;
 
-    if (status && d.status !== status) return false;
-    if (restrictedOnly && d.drugType !== "Restricted") return false;
-    if (excludeRestricted && d.drugType === "Restricted") return false;
-
+    if (d.status !== config.matchStatus) return false;
     if (date && d.reqDate !== date) return false;
     if (search && !String(d.hospitalNumber).includes(search)) return false;
     if (ids && d.idSpecialist !== ids) return false;
@@ -704,89 +729,287 @@ function renderList({ listId, dateId, searchId, idsId, status, restrictedOnly, e
     return true;
   });
 
-  list.forEach(entry => {
-    const d = entry.data;
+  filtered.forEach(e => {
+    const d = e.data;
 
-    const row = document.createElement("div");
-    row.className = "list-item";
-    row.innerHTML = `
+    const item = document.createElement("div");
+    item.className = "list-item";
+    item.innerHTML = `
       <div>
         <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
-        ${d.antimicrobial}
+        ${d.antimicrobial} — ${d.dose}
       </div>
-      <div>${d.reqDate}</div>
+      <div style="text-align:right;">
+        ${d.reqDate}<br>
+        ${
+          config.showPill
+          ? `<span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>`
+          : ""
+        }
+        ${
+          config.showIDS && d.idSpecialist
+          ? `<span class="tag idsPill">${d.idSpecialist}</span>`
+          : ""
+        }
+        ${
+          config.showReason && d.reason
+          ? `<div style="font-size:0.75rem; color:var(--text-muted);">Reason: ${d.reason}</div>`
+          : ""
+        }
+      </div>
     `;
 
-    row.onclick = () => openDetails(entry);
-
-    /* Add Cancel Approve / Cancel Reject buttons */
-    if (status === "approved") {
-      const btn = document.createElement("button");
-      btn.className = "btn cancel";
-      btn.textContent = "Cancel Approval";
-      btn.onclick = (ev) => {
-        ev.stopPropagation();
-        updateStatus(entry.fileId, "disapproved");
-      };
-      row.appendChild(btn);
-    }
-
-    if (status === "disapproved") {
-      const btn = document.createElement("button");
-      btn.className = "btn approve";
-      btn.textContent = "Cancel Rejection";
-      btn.onclick = (ev) => {
-        ev.stopPropagation();
-        updateStatus(entry.fileId, "approved");
-      };
-      row.appendChild(btn);
-    }
-
-    parent.appendChild(row);
+    item.onclick = () => openDetails(e);
+    container.appendChild(item);
   });
 }
 
-/* =========================================================
-   RENDER ALL
-========================================================= */
+/* ======================================================
+   DATA ANALYSIS
+====================================================== */
+function populateWardFilter() {
+  const wardSelect = document.getElementById("anWard");
+  const wards = [...new Set(ALL_DATA.map(e => e.data.ward))].sort();
+
+  wardSelect.innerHTML = `<option value="">All Wards</option>`;
+  wards.forEach(w => {
+    if (w) wardSelect.innerHTML += `<option>${w}</option>`;
+  });
+}
+
+function applyAnalysisFilters() {
+  const from = document.getElementById("anFrom").value;
+  const to = document.getElementById("anTo").value;
+  const ward = document.getElementById("anWard").value;
+
+  CURRENT_ANALYSIS_DATA = ALL_DATA.filter(e => {
+    const d = e.data;
+    if (from && d.reqDate < from) return false;
+    if (to && d.reqDate > to) return false;
+    if (ward && d.ward !== ward) return false;
+    return true;
+  });
+
+  renderAnalysis();
+}
+
+document.getElementById("applyAnalysis").onclick = applyAnalysisFilters;
+
+function renderAnalysis() {
+  const box = document.getElementById("analysisContent");
+  const data = CURRENT_ANALYSIS_DATA;
+
+  const total = data.length;
+  const monitored = data.filter(e => e.data.drugType === "Monitored").length;
+  const restricted = data.filter(e => e.data.drugType === "Restricted").length;
+  const approved = data.filter(e => e.data.status === "approved").length;
+  const rejected = data.filter(e => e.data.status === "disapproved").length;
+  const ids = data.filter(e => e.data.status === "for_ids_approval").length;
+
+  box.innerHTML = `
+    <div class="analysis-grid">
+
+      <div class="tile">
+        <strong>${total}</strong>
+        Total Requests
+      </div>
+
+      <div class="tile">
+        <strong>${monitored}</strong>
+        Monitored
+      </div>
+
+      <div class="tile">
+        <strong>${restricted}</strong>
+        Restricted
+      </div>
+
+      <div class="tile">
+        <strong>${approved}</strong>
+        Approved
+      </div>
+
+      <div class="tile">
+        <strong>${rejected}</strong>
+        Disapproved
+      </div>
+
+      <div class="tile">
+        <strong>${ids}</strong>
+        Sent to IDS
+      </div>
+
+    </div>
+
+    <br>
+
+    <div class="tile">
+      <h3>Top Wards</h3>
+      ${makeWardTable(data)}
+    </div>
+
+    <div class="tile">
+      <h3>Top Antimicrobials</h3>
+      ${makeDrugTable(data)}
+    </div>
+
+    <div class="tile">
+      <h3>IDS Distribution</h3>
+      ${makeIDSTable(data)}
+    </div>
+  `;
+}
+
+function makeWardTable(data) {
+  const counts = {};
+  data.forEach(e => {
+    const w = e.data.ward;
+    if (!counts[w]) counts[w] = 0;
+    counts[w]++;
+  });
+
+  let rows = Object.entries(counts)
+    .sort((a,b) => b[1]-a[1])
+    .map(([w,c]) => `<tr><td>${w}</td><td>${c}</td></tr>`)
+    .join("");
+
+  return `
+    <div class="table-box">
+      <table>
+        <tr><th>Ward</th><th>Count</th></tr>
+        ${rows}
+      </table>
+    </div>
+  `;
+}
+
+function makeDrugTable(data) {
+  const counts = {};
+  data.forEach(e => {
+    const drug = e.data.antimicrobial;
+    if (!counts[drug]) counts[drug] = 0;
+    counts[drug]++;
+  });
+
+  let rows = Object.entries(counts)
+    .sort((a,b) => b[1]-a[1])
+    .map(([x,c]) => `<tr><td>${x}</td><td>${c}</td></tr>`)
+    .join("");
+
+  return `
+    <div class="table-box">
+      <table>
+        <tr><th>Drug</th><th>Count</th></tr>
+        ${rows}
+      </table>
+    </div>
+  `;
+}
+
+function makeIDSTable(data) {
+  const counts = {};
+  data.forEach(e => {
+    const id = e.data.idSpecialist;
+    if (id) {
+      if (!counts[id]) counts[id] = 0;
+      counts[id]++;
+    }
+  });
+
+  let rows = Object.entries(counts)
+    .sort((a,b) => b[1]-a[1])
+    .map(([x,c]) => `<tr><td>${x}</td><td>${c}</td></tr>`)
+    .join("");
+
+  return `
+    <div class="table-box">
+      <table>
+        <tr><th>IDS</th><th>Count</th></tr>
+        ${rows}
+      </table>
+    </div>
+  `;
+}
+
+/* ======================================================
+   EXPORT CSV (WIDE FORMAT)
+====================================================== */
+function exportCSV(dataset, filename) {
+  const rows = [];
+
+  if (!dataset.length) {
+    alert("No data to export.");
+    return;
+  }
+
+  const headers = [];
+
+  const first = dataset[0].data;
+  for (let k in first) headers.push(k);
+
+  rows.push(headers.join(","));
+
+  dataset.forEach(e => {
+    const d = e.data;
+    const row = headers.map(h => JSON.stringify(d[h] || "")).join(",");
+    rows.push(row);
+  });
+
+  const blob = new Blob([rows.join("\n")], {type: "text/csv"});
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("exportFiltered").onclick = () => {
+  const date = new Date().toISOString().slice(0,10);
+  exportCSV(CURRENT_ANALYSIS_DATA, `ars_filtered_${date}.csv`);
+};
+
+document.getElementById("exportAll").onclick = () => {
+  const date = new Date().toISOString().slice(0,10);
+  exportCSV(ALL_DATA, `ars_all_${date}.csv`);
+};
+
+/* ======================================================
+   RENDER ALL SECTIONS
+====================================================== */
 function renderAll() {
   renderPending();
 
   renderList({
     listId: "approvedList",
-    dateId: "approvedDate",
-    searchId: "approvedSearch",
-    status: "approved",
-    excludeRestricted: true
+    dateField: "approvedDate",
+    searchField: "approvedSearch",
+    matchStatus: "approved",
+    showPill: true
   });
 
   renderList({
     listId: "rejectedList",
-    dateId: "rejectedDate",
-    searchId: "rejectedSearch",
-    status: "disapproved"
-  });
-
-  renderList({
-    listId: "dispensedList",
-    dateId: "dispensedDate",
-    searchId: "dispensedSearch",
-    status: "dispensed",
-    excludeRestricted: true
+    dateField: "rejectedDate",
+    searchField: "rejectedSearch",
+    matchStatus: "disapproved",
+    showReason: true
   });
 
   renderList({
     listId: "idsList",
-    dateId: "idsDate",
-    idsId: "idsFilter",
-    status: "for_ids_approval",
-    restrictedOnly: true
+    dateField: "idsDate",
+    idsField: "idsFilter",
+    matchStatus: "for_ids_approval",
+    showIDS: true
   });
 }
 
-/* =========================================================
+/* ======================================================
    TAB SWITCHING
-========================================================= */
+====================================================== */
 document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -795,21 +1018,18 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
     document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
     document.getElementById(btn.dataset.tab).classList.add("active");
 
-    renderAll();
+    if (btn.dataset.tab === "analysis") applyAnalysisFilters();
   };
 });
 
-/* =========================================================
+/* ======================================================
    INIT
-========================================================= */
-window.onload = () => {
-  const today = new Date().toISOString().split("T")[0];
-  ["approvedDate","rejectedDate","dispensedDate","idsDate"].forEach(id => {
-    document.getElementById(id).value = today;
-  });
-  loadData();
-};
+====================================================== */
+window.onload = loadData;
+
 </script>
 
 </body>
 </html>
+
+  
