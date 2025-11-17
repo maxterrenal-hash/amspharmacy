@@ -7,6 +7,11 @@
 
 <style>
 
+.list-item .btn {
+  min-width: 100px;
+  text-align: center;
+}
+
 /* =============================
    THEME COLORS
    ============================= */
@@ -987,11 +992,14 @@ row.innerHTML = `
     <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
   </div>
 
-  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem;">
-    <div>${d.reqDate}</div>
+<div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem;">
+  <div>${d.reqDate}</div>
+
+  <div style="display:flex; gap:0.4rem;">
     ${actionButtons}
     <button class="btn delete delete-row">Delete</button>
   </div>
+</div>
 `;
 
 
