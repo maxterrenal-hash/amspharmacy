@@ -323,6 +323,15 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 </header>
 
+<div id="updateBadge" 
+     style="position:fixed; top:10px; right:10px; background:#fff3cd; 
+            color:#8a6d3b; padding:4px 10px; font-size:0.75rem; 
+            border-radius:4px; border:1px solid #f0e1a0; 
+            display:none; z-index:200;">
+  Updating…
+</div>
+
+
 <div class="main">
 
   <!-- TABS -->
@@ -546,21 +555,82 @@ function hideLoading() {
 }
 
 /* ==========================================================
+   LOCAL CACHE MODULE (Fast Refresh)
+   ========================================================== */
+const CACHE_KEY = "AMS_DATA_CACHE_V1";
+const CACHE_TIME_KEY = "AMS_CACHE_TIME_V1";
+const CACHE_MAX_AGE = 1000 * 60 * 2; // 2 minutes
+
+function showUpdatingBadge() {
+  document.getElementById("updateBadge").style.display = "block";
+}
+function hideUpdatingBadge() {
+  document.getElementById("updateBadge").style.display = "none";
+}
+
+function loadCache() {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
+    return JSON.parse(cached);
+  } catch {
+    return null;
+  }
+}
+
+function saveCache(data) {
+  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  localStorage.setItem(CACHE_TIME_KEY, Date.now());
+}
+
+function cacheExpired() {
+  const last = Number(localStorage.getItem(CACHE_TIME_KEY) || 0);
+  return Date.now() - last > CACHE_MAX_AGE;
+}
+
+
+/* ==========================================================
    LOAD DATA
    ========================================================== */
-async function loadData() {
+/* ==========================================================
+   LOAD DATA WITH CACHE + FAST REFRESH
+   ========================================================== */
+async function loadData(force = false) {
   showLoading();
+
+  // Attempt cache
+  if (!force) {
+    const cached = loadCache();
+    if (cached && !cacheExpired()) {
+      ALL_DATA = cached;
+      setDefaultDates();
+      renderAll();
+      hideLoading();
+
+      // Start silent background check
+      backgroundRefresh();
+      return;
+    }
+  }
+
+  // Otherwise fetch from API
   try {
+    showUpdatingBadge();
     const res = await fetch(API);
     const json = await res.json();
     ALL_DATA = json.entries || [];
+
+    saveCache(ALL_DATA);
     setDefaultDates();
     renderAll();
   } catch (err) {
     console.error("Fetch error:", err);
   }
+
+  hideUpdatingBadge();
   hideLoading();
 }
+
 
 /* ==========================================================
    DEFAULT DATES = TODAY
@@ -760,6 +830,29 @@ async function deleteEntry(fileId) {
   loadData();
 }
 
+/* ==========================================================
+   BACKGROUND REFRESH (Silent)
+   ========================================================== */
+async function backgroundRefresh() {
+  try {
+    const res = await fetch(API);
+    const json = await res.json();
+    const fresh = json.entries || [];
+
+    // Compare by length (simple + fast)
+    if (fresh.length !== ALL_DATA.length) {
+      showUpdatingBadge();
+      saveCache(fresh);
+      ALL_DATA = fresh;
+      renderAll();
+      hideUpdatingBadge();
+    }
+  } catch (err) {
+    console.warn("Background refresh failed:", err);
+  }
+}
+
+  
 /* ==========================================================
    RENDER — PENDING
    ========================================================== */
@@ -1262,5 +1355,7 @@ applyAnalysis.onclick = applyAnalysisFilters;
 /* ==========================================================
    INIT
    ========================================================== */
+setInterval(() => backgroundRefresh(), 20000);
+
 window.onload = loadData;
 </script>
