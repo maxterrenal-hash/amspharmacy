@@ -963,15 +963,25 @@ function renderList(config) {
     row.className = "list-item";
 
     row.innerHTML = `
-      <div>
-        <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
-        ${d.antimicrobial} — ${d.dose} (${d.frequency})<br>
-        <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
-      </div>
-      <div>${d.reqDate}</div>
-    `;
+  <div style="flex:1;">
+    <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
+    ${d.antimicrobial} — ${d.dose} (${d.frequency})<br>
+    <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem;">
+    <div>${d.reqDate}</div>
+    <button class="btn delete delete-row">Delete</button>
+  </div>
+`;
+
 
     row.onclick = () => openDetails(entry);
+  const delBtn = row.querySelector(".delete-row");
+delBtn.onclick = (ev) => {
+  ev.stopPropagation();
+  confirmAction("Delete this entry?", () => deleteEntry(entry.fileId));
+};
 
     container.appendChild(row);
   });
