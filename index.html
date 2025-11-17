@@ -81,15 +81,13 @@ header h1 { margin: 0; font-size: 1.2rem; }
   flex-wrap: wrap;
 }
 
-/* FIX BROKEN TABS — THIS WAS MISSING */
+/* FIX BROKEN TABS */
 .section {
   display: none;
 }
-
 .section.active {
   display: block;
 }
-
 
 .tab-btn {
   background: white;
@@ -289,7 +287,6 @@ header h1 { margin: 0; font-size: 1.2rem; }
   margin-top: 0.4rem;
 }
 
-/* Heatmap */
 .heatmap-table {
   width: 100%;
   border-collapse: collapse;
@@ -301,13 +298,13 @@ header h1 { margin: 0; font-size: 1.2rem; }
   padding: 0.6rem;
   text-align: center;
 }
+
 .heat-low { background: var(--heat-low); }
 .heat-mid { background: var(--heat-mid); color:white; }
 .heat-high { background: var(--heat-high); color:white; }
 .heat-restricted-mid { background: var(--heat-restricted-mid); color:white; }
 .heat-restricted-high { background: var(--heat-restricted-high); color:white; }
 
-/* Mobile fixes */
 @media(max-width: 600px) {
   header { flex-direction: column; text-align: center; }
   .tab-btn { flex:1 1 45%; text-align:center; }
@@ -336,7 +333,6 @@ header h1 { margin: 0; font-size: 1.2rem; }
   Updating…
 </div>
 
-
 <div class="main">
 
   <!-- TABS -->
@@ -349,7 +345,7 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 
   <!-- ===========================
-       PENDING TAB
+       PENDING
        =========================== -->
   <div class="section active" id="pending">
     <div class="search-row">
@@ -360,7 +356,7 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 
   <!-- ===========================
-       APPROVED TAB
+       APPROVED
        =========================== -->
   <div class="section" id="approved">
     <div class="search-row">
@@ -371,7 +367,7 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 
   <!-- ===========================
-       REJECTED TAB
+       REJECTED
        =========================== -->
   <div class="section" id="rejected">
     <div class="search-row">
@@ -400,11 +396,10 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 
   <!-- ===========================
-       DATA ANALYSIS TAB
+       ANALYSIS
        =========================== -->
   <div class="section" id="analysis">
 
-    <!-- Filters -->
     <div class="search-row">
       <input type="date" id="fromDate">
       <input type="date" id="toDate">
@@ -430,13 +425,11 @@ header h1 { margin: 0; font-size: 1.2rem; }
       <button class="btn approve" id="applyAnalysis">Apply</button>
     </div>
 
-    <!-- Export buttons -->
     <div style="display:flex; gap:0.5rem;">
       <button class="btn approve" id="exportFilteredCsv">Export Filtered CSV</button>
       <button class="btn delete" id="exportAllCsv">Export ALL CSV</button>
     </div>
 
-    <!-- Tiles -->
     <div class="dashboard-grid" id="analysisTiles"></div>
 
     <canvas id="chartRequests" height="180" style="margin-top:1rem;"></canvas>
@@ -444,11 +437,9 @@ header h1 { margin: 0; font-size: 1.2rem; }
     <canvas id="chartApproval" height="180" style="margin-top:1rem;"></canvas>
     <canvas id="chartIDS" height="180" style="margin-top:1rem;"></canvas>
 
-    <!-- Heatmap -->
     <h3>Ward Heatmap</h3>
     <div id="heatmapContainer"></div>
 
-    <!-- Tables -->
     <h3>Top Wards</h3>
     <div id="topWards"></div>
 
@@ -471,11 +462,8 @@ header h1 { margin: 0; font-size: 1.2rem; }
 
 </div>
 
-<!-- ===========================
-     MODALS
-     =========================== -->
+<!-- ========== MODALS ========== -->
 
-<!-- DETAILS -->
 <div class="modal-backdrop" id="detailsBackdrop">
   <div class="modal-box">
     <div class="modal-header">
@@ -486,7 +474,6 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 </div>
 
-<!-- PHARMACIST MODAL -->
 <div class="modal-backdrop" id="pharmacistBackdrop">
   <div class="modal-box">
     <div class="modal-header">
@@ -501,7 +488,6 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 </div>
 
-<!-- CONFIRMATION -->
 <div class="confirm-backdrop" id="confirmBackdrop">
   <div class="confirm-box">
     <p id="confirmMsg"></p>
@@ -510,7 +496,6 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 </div>
 
-<!-- REJECTION REASON -->
 <div class="modal-backdrop" id="reasonBackdrop">
   <div class="modal-box">
     <div class="modal-header">
@@ -532,7 +517,6 @@ header h1 { margin: 0; font-size: 1.2rem; }
   </div>
 </div>
 
-<!-- JS will be in PART 2 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -547,11 +531,11 @@ let pendingAction = null;
 let tempFileId = null;
 let currentRejectFileId = null;
 
-let chartRequests, chartTopAbx, chartApproval, chartIDS;
+let pendingPharmAction = null;   // approve | disapprove | for_ids_approval
+let pendingPharmFileId = null;   // fileId to update
+let pendingPharmExtra = null;    // reject reason
 
-let pendingPharmAction = null;
-let pendingPharmFileId = null;
-let pendingPharmExtra = null; // for things like disapprove reason
+let chartRequests, chartTopAbx, chartApproval, chartIDS;
 
 /* ==========================================================
    LOADING INDICATOR
@@ -566,7 +550,7 @@ function hideLoading() {
 }
 
 /* ==========================================================
-   LOCAL CACHE MODULE (Fast Refresh)
+   LOCAL CACHE (FAST REFRESH)
    ========================================================== */
 const CACHE_KEY = "AMS_DATA_CACHE_V1";
 const CACHE_TIME_KEY = "AMS_CACHE_TIME_V1";
@@ -588,28 +572,21 @@ function loadCache() {
     return null;
   }
 }
-
 function saveCache(data) {
   localStorage.setItem(CACHE_KEY, JSON.stringify(data));
   localStorage.setItem(CACHE_TIME_KEY, Date.now());
 }
-
 function cacheExpired() {
   const last = Number(localStorage.getItem(CACHE_TIME_KEY) || 0);
   return Date.now() - last > CACHE_MAX_AGE;
 }
 
-
 /* ==========================================================
    LOAD DATA
-   ========================================================== */
-/* ==========================================================
-   LOAD DATA WITH CACHE + FAST REFRESH
    ========================================================== */
 async function loadData(force = false) {
   showLoading();
 
-  // Attempt cache
   if (!force) {
     const cached = loadCache();
     if (cached && !cacheExpired()) {
@@ -617,14 +594,11 @@ async function loadData(force = false) {
       setDefaultDates();
       renderAll();
       hideLoading();
-
-      // Start silent background check
       backgroundRefresh();
       return;
     }
   }
 
-  // Otherwise fetch from API
   try {
     showUpdatingBadge();
     const res = await fetch(API);
@@ -642,9 +616,8 @@ async function loadData(force = false) {
   hideLoading();
 }
 
-
 /* ==========================================================
-   DEFAULT DATES = TODAY
+   DEFAULT DATES
    ========================================================== */
 function setDefaultDates() {
   const today = new Date().toISOString().split("T")[0];
@@ -656,18 +629,17 @@ function setDefaultDates() {
     "fromDate",
     "toDate"
   ].forEach(id => {
-    if (document.getElementById(id) && !document.getElementById(id).value) {
-      document.getElementById(id).value = today;
-    }
+    const el = document.getElementById(id);
+    if (el && !el.value) el.value = today;
   });
 }
 
 /* ==========================================================
-   CONFIRMATION MODAL
+   CONFIRM ACTION MODAL
    ========================================================== */
-function confirmAction(message, callback) {
-  document.getElementById("confirmMsg").textContent = message;
-  pendingAction = callback;
+function confirmAction(msg, cb) {
+  document.getElementById("confirmMsg").textContent = msg;
+  pendingAction = cb;
   document.getElementById("confirmBackdrop").style.display = "flex";
 }
 document.getElementById("confirmNo").onclick = () => {
@@ -702,7 +674,6 @@ document.getElementById("rejectSubmit").onclick = () => {
     if (other) reason = other;
   }
 
-  // Store for later after pharmacist modal
   pendingPharmAction = "disapprove";
   pendingPharmFileId = currentRejectFileId;
   pendingPharmExtra = reason;
@@ -711,23 +682,18 @@ document.getElementById("rejectSubmit").onclick = () => {
   openPharmacistModal();
 };
 
-
-  currentRejectFileId = null;
-  document.getElementById("reasonBackdrop").style.display = "none";
-  loadData();
-};
-
 /* ==========================================================
    PHARMACIST MODAL
    ========================================================== */
-function openPharmacistModal(fileId) {
-  tempFileId = fileId;
+function openPharmacistModal() {
   document.getElementById("pharmName").value = "";
   document.getElementById("pharmacistBackdrop").style.display = "flex";
 }
 
 document.getElementById("pharmCancel").onclick = () => {
-  tempFileId = null;
+  pendingPharmAction = null;
+  pendingPharmFileId = null;
+  pendingPharmExtra = null;
   document.getElementById("pharmacistBackdrop").style.display = "none";
 };
 
@@ -736,7 +702,6 @@ document.getElementById("pharmSubmit").onclick = async () => {
   if (!name) return alert("Pharmacist name required.");
 
   document.getElementById("pharmacistBackdrop").style.display = "none";
-
   showLoading();
 
   if (pendingPharmAction === "approve") {
@@ -773,16 +738,13 @@ document.getElementById("pharmSubmit").onclick = async () => {
     });
   }
 
-  hideLoading();
-
-  // Reset
   pendingPharmAction = null;
   pendingPharmFileId = null;
   pendingPharmExtra = null;
 
+  hideLoading();
   loadData();
 };
-
 
 /* ==========================================================
    DETAILS MODAL
@@ -791,8 +753,10 @@ function openDetails(entry) {
   const d = entry.data;
   const box = document.getElementById("detailsBody");
 
-  const serviceResidentLabel =
-    d.mode === "adult" ? "Internal Medicine Resident" : "Pediatrics Resident";
+  const resLabel =
+    d.mode === "adult"
+      ? "Internal Medicine Resident"
+      : "Pediatrics Resident";
 
   box.innerHTML = `
     <p><strong>Patient:</strong> ${d.patientName} (${d.age} y, ${d.sex})</p>
@@ -820,9 +784,9 @@ function openDetails(entry) {
     ${
       d.drugType === "Restricted"
         ? `
-        <p><strong>${serviceResidentLabel}:</strong> ${d.serviceResidentName}</p>
-        <p><strong>IDS Specialist:</strong> ${d.idSpecialist}</p>
-      `
+          <p><strong>${resLabel}:</strong> ${d.serviceResidentName}</p>
+          <p><strong>IDS Specialist:</strong> ${d.idSpecialist}</p>
+        `
         : ""
     }
 
@@ -834,7 +798,7 @@ function openDetails(entry) {
 
     ${
       d.dispensed
-        ? `<p><strong>Dispensed:</strong> Yes, by ${d.dispensedBy}</p>`
+        ? `<p><strong>Dispensed By:</strong> ${d.dispensedBy}</p>`
         : ""
     }
 
@@ -843,12 +807,13 @@ function openDetails(entry) {
 
   document.getElementById("detailsBackdrop").style.display = "flex";
 }
+
 document.getElementById("detailsClose").onclick = () => {
   document.getElementById("detailsBackdrop").style.display = "none";
 };
 
 /* ==========================================================
-   UPDATE STATUS
+   UPDATE STATUS + DELETE
    ========================================================== */
 async function updateStatus(fileId, status) {
   showLoading();
@@ -871,7 +836,7 @@ async function deleteEntry(fileId) {
 }
 
 /* ==========================================================
-   BACKGROUND REFRESH (Silent)
+   BACKGROUND REFRESH
    ========================================================== */
 async function backgroundRefresh() {
   try {
@@ -879,7 +844,6 @@ async function backgroundRefresh() {
     const json = await res.json();
     const fresh = json.entries || [];
 
-    // Compare by length (simple + fast)
     if (fresh.length !== ALL_DATA.length) {
       showUpdatingBadge();
       saveCache(fresh);
@@ -892,9 +856,8 @@ async function backgroundRefresh() {
   }
 }
 
-  
 /* ==========================================================
-   RENDER — PENDING
+   RENDER PENDING
    ========================================================== */
 function renderPending() {
   const date = pendingDate.value;
@@ -964,16 +927,11 @@ function renderPending() {
         openPharmacistModal();
       };
 
-
     card.querySelector(".reject").onclick = (ev) => {
       ev.stopPropagation();
-      // Step 1: choose reason first
       currentRejectFileId = entry.fileId;
       document.getElementById("reasonBackdrop").style.display = "flex";
-    
-      // Step 2 happens in rejectSubmit
     };
-
 
     card.querySelector(".delete").onclick = (ev) => {
       ev.stopPropagation();
@@ -985,99 +943,89 @@ function renderPending() {
 }
 
 /* ==========================================================
-   RENDER GENERIC LISTS
+   RENDER LISTS (Approved, Rejected, IDS)
    ========================================================== */
-function renderList(config) {
-  const container = document.getElementById(config.listId);
+function renderList(cfg) {
+  const container = document.getElementById(cfg.listId);
   container.innerHTML = "";
 
-  const date = config.dateField ? document.getElementById(config.dateField).value : "";
-  const search = config.searchField ? document.getElementById(config.searchField).value.trim() : "";
-  const idsFilter = config.idsField ? document.getElementById(config.idsField).value : "";
+  const date = cfg.dateField ? document.getElementById(cfg.dateField).value : "";
+  const search = cfg.searchField ? document.getElementById(cfg.searchField).value.trim() : "";
+  const ids = cfg.idsField ? document.getElementById(cfg.idsField).value : "";
 
   const filtered = ALL_DATA.filter((e) => {
     const d = e.data;
-
-    if (config.matchStatus && d.status !== config.matchStatus) return false;
+    if (cfg.matchStatus && d.status !== cfg.matchStatus) return false;
     if (date && d.reqDate !== date) return false;
     if (search && !String(d.hospitalNumber).includes(search)) return false;
-    if (idsFilter && d.idSpecialist !== idsFilter) return false;
-
+    if (ids && d.idSpecialist !== ids) return false;
     return true;
   });
 
   filtered.forEach((entry) => {
     const d = entry.data;
+
     const row = document.createElement("div");
     row.className = "list-item";
 
-let actionButtons = "";
+    let actionButtons = "";
 
-// Approved → Disapprove
-if (config.matchStatus === "approved") {
-  actionButtons = `
-    <button class="btn reject disapprove-row">Disapprove</button>
-  `;
-}
+    if (cfg.matchStatus === "approved") {
+      actionButtons = `<button class="btn reject disapprove-row">Disapprove</button>`;
+    }
 
-// Rejected → Approve
-if (config.matchStatus === "disapproved") {
-  actionButtons = `
-    <button class="btn approve approve-row">Approve</button>
-  `;
-}
+    if (cfg.matchStatus === "disapproved") {
+      actionButtons = `<button class="btn approve approve-row">Approve</button>`;
+    }
 
-row.innerHTML = `
-  <div style="flex:1;">
-    <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
-    ${d.antimicrobial} — ${d.dose} (${d.frequency})<br>
-    <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
-  </div>
+    row.innerHTML = `
+      <div style="flex:1;">
+        <strong>${d.patientName}</strong> (${d.hospitalNumber})<br>
+        ${d.antimicrobial} — ${d.dose} (${d.frequency})<br>
+        <span class="tag ${d.drugType.toLowerCase()}">${d.drugType}</span>
+      </div>
 
-<div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem;">
-  <div>${d.reqDate}</div>
-
-  <div style="display:flex; gap:0.4rem;">
-    ${actionButtons}
-    <button class="btn delete delete-row">Delete</button>
-  </div>
-</div>
-`;
-
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.4rem;">
+        <div>${d.reqDate}</div>
+        <div style="display:flex; gap:0.4rem;">
+          ${actionButtons}
+          <button class="btn delete delete-row">Delete</button>
+        </div>
+      </div>
+    `;
 
     row.onclick = () => openDetails(entry);
-  const delBtn = row.querySelector(".delete-row");
-delBtn.onclick = (ev) => {
-  ev.stopPropagation();
-  confirmAction("Delete this entry?", () => deleteEntry(entry.fileId));
-};
 
-  // APPROVED TAB → Disapprove → Send to Rejected
-const disBtn = row.querySelector(".disapprove-row");
-if (disBtn) {
-  disBtn.onclick = async (ev) => {
-    ev.stopPropagation();
-    await updateStatus(entry.fileId, "disapproved");
-    loadData(); // instantly refresh
-  };
-}
+    const delBtn = row.querySelector(".delete-row");
+    delBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      confirmAction("Delete this entry?", () => deleteEntry(entry.fileId));
+    };
 
-// REJECTED TAB → Approve → Send to Approved
-const apBtn = row.querySelector(".approve-row");
-if (apBtn) {
-  apBtn.onclick = async (ev) => {
-    ev.stopPropagation();
-    await updateStatus(entry.fileId, "approved");
-    loadData();
-  };
-}
+    const disBtn = row.querySelector(".disapprove-row");
+    if (disBtn) {
+      disBtn.onclick = async (ev) => {
+        ev.stopPropagation();
+        await updateStatus(entry.fileId, "disapproved");
+        loadData();
+      };
+    }
+
+    const apBtn = row.querySelector(".approve-row");
+    if (apBtn) {
+      apBtn.onclick = async (ev) => {
+        ev.stopPropagation();
+        await updateStatus(entry.fileId, "approved");
+        loadData();
+      };
+    }
 
     container.appendChild(row);
   });
 }
 
 /* ==========================================================
-   DATA ANALYSIS ENGINE
+   ANALYSIS
    ========================================================== */
 function applyAnalysisFilters() {
   const f = fromDate.value;
@@ -1104,7 +1052,6 @@ function applyAnalysisFilters() {
   renderHeatmap(data);
 }
 
-/* TILES */
 function renderAnalysisTiles(data) {
   const tiles = document.getElementById("analysisTiles");
 
@@ -1127,13 +1074,11 @@ function renderAnalysisTiles(data) {
    CHARTS
    ========================================================== */
 function renderCharts(data) {
-  /* Destroy old charts */
   if (chartRequests) chartRequests.destroy();
   if (chartTopAbx) chartTopAbx.destroy();
   if (chartApproval) chartApproval.destroy();
   if (chartIDS) chartIDS.destroy();
 
-  /* Requests per date */
   const byDate = {};
   data.forEach((e) => byDate[e.data.reqDate] = (byDate[e.data.reqDate] || 0) + 1);
 
@@ -1141,20 +1086,16 @@ function renderCharts(data) {
     type: "line",
     data: {
       labels: Object.keys(byDate),
-      datasets: [
-        {
-          label: "Requests",
-          data: Object.values(byDate),
-          borderColor: "#009a3e",
-          borderWidth: 2,
-          fill: false,
-          tension: 0.2,
-        },
-      ],
-    },
+      datasets: [{
+        label: "Requests",
+        data: Object.values(byDate),
+        borderColor: "#009a3e",
+        borderWidth: 2,
+        fill: false,
+      }]
+    }
   });
 
-  /* Top ABX */
   const byAbx = {};
   data.forEach((e) => byAbx[e.data.antimicrobial] = (byAbx[e.data.antimicrobial] || 0) + 1);
 
@@ -1162,34 +1103,28 @@ function renderCharts(data) {
     type: "bar",
     data: {
       labels: Object.keys(byAbx),
-      datasets: [
-        {
-          label: "Top Antibiotics",
-          data: Object.values(byAbx),
-          backgroundColor: "#10b981",
-        },
-      ],
-    },
+      datasets: [{
+        label: "Top Antibiotics",
+        data: Object.values(byAbx),
+        backgroundColor: "#10b981",
+      }]
+    }
   });
 
-  /* Approval */
-  const approved = data.filter((e) => e.data.status === "approved").length;
-  const disapproved = data.filter((e) => e.data.status === "disapproved").length;
+  const ap = data.filter((e) => e.data.status === "approved").length;
+  const dis = data.filter((e) => e.data.status === "disapproved").length;
 
   chartApproval = new Chart(document.getElementById("chartApproval"), {
     type: "pie",
     data: {
       labels: ["Approved", "Disapproved"],
-      datasets: [
-        {
-          data: [approved, disapproved],
-          backgroundColor: ["#009a3e", "#dc2626"],
-        },
-      ],
-    },
+      datasets: [{
+        data: [ap, dis],
+        backgroundColor: ["#009a3e", "#dc2626"],
+      }]
+    }
   });
 
-  /* IDS workload */
   const byIDS = {};
   data.forEach((e) => {
     if (!e.data.idSpecialist) return;
@@ -1200,19 +1135,17 @@ function renderCharts(data) {
     type: "bar",
     data: {
       labels: Object.keys(byIDS),
-      datasets: [
-        {
-          label: "IDS Load",
-          data: Object.values(byIDS),
-          backgroundColor: "#f59e0b",
-        },
-      ],
-    },
+      datasets: [{
+        label: "IDS Load",
+        data: Object.values(byIDS),
+        backgroundColor: "#f59e0b",
+      }]
+    }
   });
 }
 
 /* ==========================================================
-   TABLES (Top Wards, ABX, Indications, Reject Reasons, IDS workload, TAT)
+   TOP TABLES + HEATMAP
    ========================================================== */
 function renderTopTables(data) {
   const byWard = {};
@@ -1228,6 +1161,7 @@ function renderTopTables(data) {
     byWard[d.ward] = (byWard[d.ward] || 0) + 1;
     byAbx[d.antimicrobial] = (byAbx[d.antimicrobial] || 0) + 1;
     byInd[d.indication] = (byInd[d.indication] || 0) + 1;
+
     if (d.disapprovedReason)
       byReject[d.disapprovedReason] =
         (byReject[d.disapprovedReason] || 0) + 1;
@@ -1243,42 +1177,38 @@ function renderTopTables(data) {
     }
   });
 
-  /* Top wards */
   document.getElementById("topWards").innerHTML =
     Object.entries(byWard)
       .sort((a, b) => b[1] - a[1])
       .map(([k, v]) => `<div>${k}: <strong>${v}</strong></div>`)
       .join("") || "No data";
 
-  /* Top ABX */
   document.getElementById("topAbx").innerHTML =
     Object.entries(byAbx)
       .sort((a, b) => b[1] - a[1])
       .map(([k, v]) => `<div>${k}: <strong>${v}</strong></div>`)
       .join("") || "No data";
 
-  /* Indications */
   document.getElementById("topIndications").innerHTML =
     Object.entries(byInd)
       .sort((a, b) => b[1] - a[1])
       .map(([k, v]) => `<div>${k}: <strong>${v}</strong></div>`)
       .join("") || "No data";
 
-  /* Reject reasons */
   document.getElementById("rejectTable").innerHTML =
     Object.entries(byReject)
       .map(([k, v]) => `<div>${k}: <strong>${v}</strong></div>`)
       .join("") || "No data";
 
-  /* IDS workload table */
   document.getElementById("idsWorkloadTable").innerHTML =
     Object.entries(byIDS)
       .map(([k, v]) => `<div>${k}: <strong>${v}</strong></div>`)
       .join("") || "No data";
 
-  /* Turnaround times */
   if (tatValues.length) {
-    const avg = (tatValues.reduce((a, b) => a + b, 0) / tatValues.length).toFixed(1);
+    const avg = (
+      tatValues.reduce((a, b) => a + b, 0) / tatValues.length
+    ).toFixed(1);
     document.getElementById("tatTable").innerHTML =
       `Average TAT: <strong>${avg} days</strong>`;
   } else {
@@ -1286,9 +1216,6 @@ function renderTopTables(data) {
   }
 }
 
-/* ==========================================================
-   HEATMAP GENERATOR
-   ========================================================== */
 function renderHeatmap(data) {
   const wards = [...new Set(data.map((e) => e.data.ward))];
   const dates = [...new Set(data.map((e) => e.data.reqDate))].sort();
@@ -1317,12 +1244,11 @@ function renderHeatmap(data) {
   });
 
   html += "</tbody></table>";
-
   document.getElementById("heatmapContainer").innerHTML = html;
 }
 
 /* ==========================================================
-   CSV EXPORTERS
+   CSV EXPORT
    ========================================================== */
 function convertToCSV(data) {
   const header = [
@@ -1404,7 +1330,7 @@ function loadWardOptions() {
 }
 
 /* ==========================================================
-   RENDER ALL
+   RENDER ALL TABS
    ========================================================== */
 function renderAll() {
   renderPending();
@@ -1455,6 +1381,8 @@ applyAnalysis.onclick = applyAnalysisFilters;
    INIT
    ========================================================== */
 setInterval(() => backgroundRefresh(), 20000);
-
 window.onload = loadData;
+
 </script>
+</body>
+</html>
