@@ -549,6 +549,10 @@ let currentRejectFileId = null;
 
 let chartRequests, chartTopAbx, chartApproval, chartIDS;
 
+let pendingPharmAction = null;
+let pendingPharmFileId = null;
+let pendingPharmExtra = null; // for things like disapprove reason
+
 /* ==========================================================
    LOADING INDICATOR
    ========================================================== */
@@ -689,7 +693,7 @@ document.getElementById("rejectCancel").onclick = () => {
   document.getElementById("reasonBackdrop").style.display = "none";
 };
 
-document.getElementById("rejectSubmit").onclick = async () => {
+document.getElementById("rejectSubmit").onclick = () => {
   if (!currentRejectFileId) return;
 
   let reason = document.getElementById("rejectReason").value;
@@ -698,16 +702,15 @@ document.getElementById("rejectSubmit").onclick = async () => {
     if (other) reason = other;
   }
 
-  showLoading();
-  await fetch(API, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "rejectWithReason",
-      fileId: currentRejectFileId,
-      reason,
-    }),
-  });
-  hideLoading();
+  // Store for later after pharmacist modal
+  pendingPharmAction = "disapprove";
+  pendingPharmFileId = currentRejectFileId;
+  pendingPharmExtra = reason;
+
+  document.getElementById("reasonBackdrop").style.display = "none";
+  openPharmacistModal();
+};
+
 
   currentRejectFileId = null;
   document.getElementById("reasonBackdrop").style.display = "none";
@@ -730,26 +733,56 @@ document.getElementById("pharmCancel").onclick = () => {
 
 document.getElementById("pharmSubmit").onclick = async () => {
   const name = document.getElementById("pharmName").value.trim();
-  if (!name) {
-    alert("Pharmacist name required.");
-    return;
-  }
+  if (!name) return alert("Pharmacist name required.");
+
+  document.getElementById("pharmacistBackdrop").style.display = "none";
 
   showLoading();
-  await fetch(API, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "markDispensed",
-      fileId: tempFileId,
-      dispensedBy: name,
-    }),
-  });
+
+  if (pendingPharmAction === "approve") {
+    await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "approveWithPharmacist",
+        fileId: pendingPharmFileId,
+        dispensedBy: name,
+      }),
+    });
+  }
+
+  if (pendingPharmAction === "for_ids_approval") {
+    await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "markIdsApproval",
+        fileId: pendingPharmFileId,
+        dispensedBy: name,
+      }),
+    });
+  }
+
+  if (pendingPharmAction === "disapprove") {
+    await fetch(API, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "rejectWithReason",
+        fileId: pendingPharmFileId,
+        reason: pendingPharmExtra,
+        dispensedBy: name,
+      }),
+    });
+  }
+
   hideLoading();
 
-  tempFileId = null;
-  document.getElementById("pharmacistBackdrop").style.display = "none";
+  // Reset
+  pendingPharmAction = null;
+  pendingPharmFileId = null;
+  pendingPharmExtra = null;
+
   loadData();
 };
+
 
 /* ==========================================================
    DETAILS MODAL
@@ -918,20 +951,29 @@ function renderPending() {
     if (card.querySelector(".approve"))
       card.querySelector(".approve").onclick = (ev) => {
         ev.stopPropagation();
-        openPharmacistModal(entry.fileId);
+        pendingPharmFileId = entry.fileId;
+        pendingPharmAction = "approve";
+        openPharmacistModal();
       };
 
     if (card.querySelector(".for-ids"))
       card.querySelector(".for-ids").onclick = (ev) => {
         ev.stopPropagation();
-        updateStatus(entry.fileId, "for_ids_approval");
+        pendingPharmFileId = entry.fileId;
+        pendingPharmAction = "for_ids_approval";
+        openPharmacistModal();
       };
+
 
     card.querySelector(".reject").onclick = (ev) => {
       ev.stopPropagation();
+      // Step 1: choose reason first
       currentRejectFileId = entry.fileId;
       document.getElementById("reasonBackdrop").style.display = "flex";
+    
+      // Step 2 happens in rejectSubmit
     };
+
 
     card.querySelector(".delete").onclick = (ev) => {
       ev.stopPropagation();
