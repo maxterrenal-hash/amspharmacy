@@ -349,7 +349,6 @@ header h1 { margin: 0; font-size: 1.2rem; }
        =========================== -->
   <div class="section active" id="pending">
     <div class="search-row">
-      <input type="date" id="pendingDate">
       <input type="text" id="pendingSearch" placeholder="Search Hospital Number">
     </div>
     <div id="pendingList"></div>
@@ -860,14 +859,12 @@ async function backgroundRefresh() {
    RENDER PENDING
    ========================================================== */
 function renderPending() {
-  const date = pendingDate.value;
   const search = pendingSearch.value.trim();
   const container = document.getElementById("pendingList");
   container.innerHTML = "";
 
   const filtered = ALL_DATA.filter((e) => {
     const d = e.data;
-    if (date && d.reqDate !== date) return false;
     if (search && !String(d.hospitalNumber).includes(search)) return false;
     return !["approved", "disapproved", "for_ids_approval"].includes(d.status);
   });
